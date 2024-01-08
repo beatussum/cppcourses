@@ -3,4 +3,4 @@ defaultContentLanguage = "fr"
 enableEmoji = true
 enableGitInfo = true
 title = "Formation C++ 17"
-theme = "PaperMod"
+theme = "hugo-theme-learn"
