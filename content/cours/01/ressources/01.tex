@@ -1,0 +1,1226 @@
+\documentclass{cppcourses}
+
+\title[Formation C++ 17]{
+    Formation C++ 17 \no 01 \\
+    \small{Variables, types et notion de programmation impérative}
+}
+
+\begin{document}
+
+\frame{\titlepage}
+\frame{\tableofcontents[pausesections, pausesubsections]}
+
+\section{Avant-propos}
+
+\begin{frame}
+
+\frametitle{Avant-propos}
+
+Avant de commencer, il est important de rappeler que ce cours est réalisé par \myimp{un étudiant}.
+
+Par conséquent, il n'a pas la même fiabilité qu'un cours dispensé par \myimp{un réel enseignant de l'ENSIMAG}.
+
+N'utilisez pas ce cours comme \myimp{un argument d'autorité} !
+
+Si un professeur semble, a posteriori, contredire des éléments apportés par ce cours, \myimp{il a très probablement raison}.
+
+Ce document est \myimp{vivant} : je veillerai à corriger les coquilles ou erreurs plus problématiques.
+
+\end{frame}
+
+\section{Notion de programmation impérative}
+
+\subsection{Introduction}
+
+\begin{frame}
+
+\frametitle{Notion de programmation impérative}
+
+\begin{definition}
+\mydef{La programmation impérative} est \myimp{un paradigme de programmation}, une façon d'approcher la programmation, qui considère les opérations comme des séquences d'instructions exécutées par l'ordinateur pour modifier l'état du programme.
+\end{definition}
+
+De manière plus schématique, cela revient (presque) à lire le programme dans l'ordre de lecture usuel.
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Notion de \emph{statements}}
+
+\begin{definition}
+\mydef{Des \emph{statements}} sont des fragments d'un programme C++ exécutés en séquence.
+\end{definition}
+
+En C++, tout \emph{statement} se termine par \myimp{un point-virgule} (\myimp{\mykeyword{;}}).
+
+\mywarn<2->{Le terme \enquote{\emph{statement}} pourrait être traduit par \enquote{instruction} en français ; cependant, ce terme est ambigu car il pourrait également référer à \myimp{des instructions machines} : on préférera donc, dans ce cours, parler de \emph{statement}.}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Commentaires}
+
+\begin{definition}
+\mydef{Un commentaire} est un texte documentaire qui n'a aucun impact sur le programme : son contenu est ignoré par le compilateur.
+\end{definition}
+
+En C++, la syntaxe utilisée est la suivante :
+
+\begin{lstlisting}[language = c++]
+// Un commentaire sur une ligne.
+
+/*
+ * Un commentaire sur
+ * une ou plusieurs lignes.
+ */
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Imprimer sur la console}
+
+Pour afficher du texte sur la console, on mettra au début de tous les fichiers les lignes suivantes :
+
+\begin{lstlisting}[language = c++]
+#include <iostream>
+
+using namespace std;
+\end{lstlisting}
+
+Pour afficher \enquote{txt}, on utilisera :
+
+\begin{lstlisting}[language = c++]
+cout << txt;
+\end{lstlisting}
+
+Si on veut rajouter un retour à la ligne, on préférera :
+
+\begin{lstlisting}[language = c++]
+cout << txt << '\n';
+\end{lstlisting}
+
+\end{frame}
+
+\subsection{La fonction \mykeyword{main}}
+
+\begin{frame}[fragile]
+
+\frametitle{La fonction \mykeyword{main}}
+
+En C++, comme en C, le point de départ de l'exécution du programme est la première instruction de la fonction \mykeyword{main}.
+
+\begin{lstlisting}[language = c++]
+#include <iostream>
+
+using namespace std;
+
+int main(int argc, char* argv[])
+{
+    cout << "Hello world!" << '\n';
+
+    return 0; // cette ligne est optionnelle
+}
+\end{lstlisting}
+
+\mywarn{Particularité de cette fonction (et uniquement celle-ci), on peut omettre le \mykeyword{return 0} car c'est la valeur de retour par défaut.}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{La fonction \mykeyword{main}}
+
+\begin{lstlisting}[language = c++]
+int main(int argc, char* argv[])
+\end{lstlisting}
+
+Cette fonction a pour type de retour un \mykeyword{int} (un entier). Celui-ci notifie si le programme s'est terminé normalement :
+
+\begin{itemize}
+    \item<2-> un retour nul signifie qu'il n'y a pas eu d'erreur,
+    \item<3-> à l'inverse d'une valeur non nul qui informe, malgré cela, l'erreur rencontrée par sa valeur.
+\end{itemize}
+
+\uncover<4->{Elle prend deux arguments : \myimp{un entier} et \myimp{un tableau de chaînes de caractères}. Par convention, on a :}
+
+\begin{itemize}
+    \item<5-> \mykeyword{argc} (\emph{argument count}) qui représente le nombre d'argument passé en ligne de commande,
+    \item<6-> \mykeyword{argv} (\emph{argument vector}) qui représente les arguments.
+\end{itemize}
+
+\mywarn<7->{Au moins un argument est passé au programme : il s'agit de son nom (son chemin).}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Différentes formes possibles}
+
+\begin{columns}
+    \begin{column}{0.5\textwidth}
+\footnotesize
+
+\mykeyword{argv} est ici \myimp{un tableau de chaîne de caractères}.
+
+        \begin{lstlisting}[language = c++]
+#include <iostream>
+
+using namespace std;
+
+int main(int argc, char* argv[])
+{
+    cout << "Hello world!" << '\n';
+}
+        \end{lstlisting}
+
+\mykeyword{argv} est ici \myimp{un pointeur vers le premier élément d'un tableau de chaînes de caractères}.
+
+        \begin{lstlisting}[language = c++]
+#include <iostream>
+
+using namespace std;
+
+int main(int argc, char** argv)
+{
+    cout << "Hello world!" << '\n';
+}
+        \end{lstlisting}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+\footnotesize
+
+Quand on a besoin ni de \mykeyword{argc} ni de \mykeyword{argv}, on peut les omettre.
+
+        \begin{lstlisting}[language = c++]
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+    cout << "Hello world!" << '\n';
+}
+        \end{lstlisting}
+    \end{column}
+\end{columns}
+
+\end{frame}
+
+\subsubsection{Quelques exemples}
+
+\begin{frame}[fragile]
+
+\frametitle{Pour bien comprendre la notion de point d'entrée}
+
+\begin{example}
+    \begin{lstlisting}[language = c++]
+#include <iostream>
+
+using namespace std;
+
+void foo()
+{
+    cout << "foo" << '\n';
+}
+
+void hello()
+{
+    cout << "Hello world!" << '\n';
+}
+
+int main(int argc, char* argv[])
+{
+    hello();
+}
+     \end{lstlisting}
+
+Dans l'exemple ci-dessus, que sera-t-il affiché sur la console ?
+
+\myanswer<2->{Il sera affiché \enquote{Hello world!}.}
+\end{example}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Pour bien comprendre la notion de point d'entrée}
+
+\begin{example}
+    \begin{lstlisting}[language = c++]
+#include <iostream>
+
+using namespace std;
+
+void hello()
+{
+    cout << "Hello world!" << '\n';
+}
+
+hello();
+
+int main(int argc, char* argv[])
+{
+    hello();
+}
+     \end{lstlisting}
+
+Dans l'exemple ci-dessus, que va-t-il se passer et pourquoi ?
+
+\myanswer<2->{Le programme ne se compilera pas car on appelle une fonction dans la portée globale.}
+\end{example}
+
+\end{frame}
+
+\section{Définition de variables}
+
+\subsection{Introduction}
+
+\begin{frame}
+
+\frametitle{Un langage à typage statique et faible}
+
+\begin{definition}
+\mydef{Un langage statiquement typé} est un langage dont le type des variables est déterminé à la compilation. Il s'oppose à \myimp{un langage dynamiquement typé}.
+\end{definition}
+
+\begin{definition}
+\mydef{Un langage faiblement typé} est un langage dont chaque variable, bien qu'elle possède un type, peut en changer en s'appuyant, par exemple, sur des règles de conversion.
+\end{definition}
+
+Le C++ est \myimp{un langage à typage statique et faible} ; à l'inverse, Python est \myimp{un langage à typage dynamique et fort}.
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{L'intérêt d'un typage statique}
+
+\begin{example}
+
+\begin{onlyenv}<1>
+
+Considérons le programme Python ci-dessous :
+
+\begin{lstlisting}[language = Python]
+#! /usr/bin/env python3
+
+
+def my_sum(a, b):
+    """
+    Somme deux entiers.
+    """
+
+    return a + b
+
+def main():
+    my_sum(10, 10)
+    my_sum([1], [3]) # fonctionne quand même !
+    my_sum(10, "toto") # on a une erreur ici !
+
+if __name__ == "__main__":
+    main()
+\end{lstlisting}
+
+\end{onlyenv}
+
+\only<2->{On remarque deux choses :}
+
+\begin{enumerate}
+    \item<only@2- | uncover@3-> à \textbf{la ligne 13}, on a aucune erreur bien que l'on ne veuille que des entiers ;
+    \item<only@2- | uncover@4-> à \textbf{la ligne 14}, on a une erreur qui ne se manifeste que lorsque la ligne est atteinte à l'exécution.
+\end{enumerate}
+
+\action<only@2- | uncover@5->{En C++, les variables étant statiquement typées, les deux problématiques ci-dessus ne se posent pas.}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Notion d'alias}
+
+En C++, comme en C, on peut nommer un \mykeyword{\textcolor{red}{type}} par un \mykeyword{\textcolor{blue}{autre type}}.
+
+\uncover<2->{Il existe deux syntaxes équivalentes :}
+
+\begin{uncoverenv}<3->
+
+\begin{figure}
+\mykeyword{typedef \textcolor{red}{<type>} \textcolor{blue}{<autre nom>};}
+\caption{définition d'un alias (syntaxe C)}
+\end{figure}
+
+\end{uncoverenv}
+
+\begin{uncoverenv}<4->
+
+\begin{figure}
+\mykeyword{using \textcolor{blue}{<autre nom>} = \textcolor{red}{<type>};}
+\caption{définition d'un alias (syntaxe C++)}
+\end{figure}
+
+\end{uncoverenv}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Un exemple}
+
+\begin{example}
+
+\begin{lstlisting}[language = c++]
+#include <iostream>
+
+using namespace std;
+
+using mon_super_booleen = int;
+typedef int mon_super_type;
+
+int main()
+{
+    mon_super_entier a = 5;
+    mon_super_type b   = 10;
+
+    cout << a << '\n';
+    cout << b << '\n';
+}
+\end{lstlisting}
+
+Dans l'exemple ci-dessus que va-t-il s'imprimer sur la console ?
+
+\myanswer<2->{Il y aura \enquote{5}, puis \enquote{10}.}
+
+\end{example}
+
+\end{frame}
+
+\subsection{Types fondamentaux}
+
+\begin{frame}
+
+\frametitle{Types fondamentaux}
+
+Le C++ est \myimp{un langage fortement typé} : toutes les variables ont un type et qui ne peut pas changer au cours de l'exécution du programme.
+
+Pour l'instant, on se limitera au \myimp{types fondamentaux} (ou \myimp{fundamental types}) à l'exception de \mykeyword{std::nullptr\_t} que l'on verra plus tard quand on parlera de pointeur.
+
+\uncover<2->{Il s'agit de :}
+
+\begin{itemize}
+     \item<2-> \mykeyword{void} (presque équivalent au \mykeyword{None} de Python),
+     \item<3-> \mykeyword{bool} (\myimp{booléen}),
+     \item<4-> \mykeyword{char}, \mykeyword{signed char} et \mykeyword{unsigned char} (\myimp{types caractères ordinaires}),
+     \item<5-> \mykeyword{char16\_t}, \mykeyword{char32\_t} et \mykeyword{wchar\_t} (\myimp{\emph{wide character types}}),
+     \item<6-> \mykeyword{float}, \mykeyword{double} et \mykeyword{long double} (\myimp{types virgules flottantes}),
+     \item<7-> \mykeyword{signed char}, \mykeyword{short}, \mykeyword{int}, \mykeyword{long} et \mykeyword{long long} (\myimp{types entiers signés}),
+     \item<8-> \mykeyword{unsigned char}, \mykeyword{unsigned short}, \mykeyword{unsigned int}, \mykeyword{unsigned long} et \mykeyword{unsigned long long} (\myimp{types entiers non signés}).
+\end{itemize}
+
+\end{frame}
+
+\subsubsection{Les types non entiers}
+
+\begin{frame}[fragile]
+
+\frametitle{Le mot clef \mykeyword{void}}
+
+\begin{definition}
+\mydef{Un type incomplet} est un type qui manque des informations nécessaires pour connaître sa taille en mémoire.
+\end{definition}
+
+Une variable de type incomplet est très limitée dans son utilisation.
+
+\mykeyword{void} est un type incomplet qui ne peut pas être complété. Son rôle sera vu, plus en détails, quand on parlera de pointeurs, de fonctions et de \mykeyword{template}.
+
+\begin{example}<2->
+
+De cette façon, la ligne ci-dessous ne compilera pas :
+
+\begin{lstlisting}[language = c++]
+void a;
+\end{lstlisting}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Les booléens}
+
+Un booléen a deux valeurs possibles :
+
+\begin{itemize}
+    \item<2-> \mykeyword{false},
+    \item<3-> \mykeyword{true}.
+\end{itemize}
+
+\uncover<4->{N'importe quel intégral (\emph{integral}) (un caractère ou un entier) ou flottant peut être converti implicitement en booléen. La règle est la suivante :}
+
+\begin{itemize}
+    \item<5-> si sa valeur est nulle, alors la variable en question vaut \mykeyword{false},
+    \item<6-> sinon, il vaut \mykeyword{true}.
+\end{itemize}
+
+\uncover<7->{Ceci constitue un des nombreux exemples montrant que le C++ est \myimp{un langage faiblement typé}.}
+
+\begin{example}<8->
+    \begin{lstlisting}[language = c++]
+bool a = 255; // a est vrai
+bool b = 0.; // b est faux
+bool c = '0'; // b est vrai
+    \end{lstlisting}
+\end{example}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Types caractères ordinaires}
+
+\mykeyword{char} est soit \myimp{signé} soit \myimp{non signé} mais il diffèrera toujours de
+\mykeyword{signed char} et \mykeyword{unsigned char}.
+
+\mykeyword{char} est capable de stocker un certain nombre de caractères Unicode dont on peut trouver la liste précise sur \url{https://en.cppreference.com/w/cpp/language/charset\#Basic\_character\_set}.
+
+Il a une taille fixe : dans presque toutes les situations, elle est d'\myimp{un octet}.
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{\emph{Wide character types}}
+
+\begin{definition}
+La taille des caractères dans certains encodages (par exemple, \myimp{UTF-8}, \myimp{UTF-16} et \myimp{UTF-32}) est variables. De cette façon, un caractère est divisé en plusieurs unités appelées \mydef{unités de code}.
+\end{definition}
+
+Les types étudiés ici représentent chacun \myimp{une unité de code}.
+
+\uncover<2->{On retrouve :}
+
+\begin{itemize}
+    \item<2-> \mykeyword{char16\_t} en \myimp{UTF-16} (\myimp{au moins deux octets}),
+    \item<3-> \mykeyword{char32\_t} en \myimp{UTF-32} (\myimp{au moins quatre octets}),
+    \item<4-> \mykeyword{wchar\_t} qui est sensé supporté n'importe quelle unité de code qu'importe l'encodage utilisé.
+\end{itemize}
+
+\mywarn<5->{En réalité, \mykeyword{wchar\_t} est dysfonctionnel et son usage est à limiter.}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Types virgules flottantes}
+
+Il existe trois types différents :
+
+\begin{enumerate}
+    \item \mykeyword{float} est \myimp{une virgule flottante simple précision},
+    \item<2-> \mykeyword{double} est \myimp{une virgule flottante double précision},
+    \item<3-> \mykeyword{long double} est, si la machine cible la supporte, \myimp{une virgule flottante quadruple précision} ; sinon si cela est supporté, il s'agit d'\myimp{une virgule flottante double précision étendue} ; sinon si celui-ci existe, un autre format avec une meilleure précision ; sinon, c'est \myimp{une virgule flottante double précision}.
+\end{enumerate}
+
+\mywarn<4->{En d'autres termes, les types ci-dessus sont listés par ordre de précision croissante (pas strictement).}
+
+\end{frame}
+
+\subsubsection{Les entiers}
+
+\begin{frame}
+
+\frametitle{Une histoire de signe}
+
+Un entier est dit \enquote{\myimp{signé}} s'il est capable de supporter des valeurs négatives ; dans le cas contraire, on dit qu'il est \enquote{\myimp{non signé}}.
+
+\begin{uncoverenv}<2->
+
+Pour définir un entier comme signé, on peut utiliser la syntaxe suivante :
+
+\begin{figure}
+\mykeyword{unsigned \textcolor{red}{<type entier>}}
+\caption{forme d'un entier non signé}
+\end{figure}
+
+\end{uncoverenv}
+
+\uncover<3->{Par défaut, en C++, les entiers sont signés ; on peut cependant rajouter le mot clef \myimp{\mykeyword{signed}} pour l'expliciter.}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Comment représenter un entier négatif en mémoire ?}
+
+On peut proposer trois approches différentes :
+
+\begin{enumerate}
+
+    \item<2-> l'utilisation d'un bit de signe,
+
+    \myissue<only@3-4>{
+        \begin{align*}
+            \begin{split}
+{0001}_2 + {1001}_2 &= {1010}_2 \\
+\myhence 1 + (-1) &= -2
+            \end{split}
+        \end{align*}
+
+On devrait donc avoir une interprétation pas très pratique des calculs arithmétiques avec les entiers signés.
+    }
+
+    \item<4-> l'opposé d'un entier est son complément à 1 (bit-à-bit),
+
+    \begin{onlyenv}<5-7>
+
+    On a dorénavant bien :
+
+    \begin{align*}
+        \begin{split}
+    {0001}_2 + {1110}_2 &= {1111}_2 \\
+    \myhence 1 + (-1) &= 0
+        \end{split}
+    \end{align*}
+
+    \end{onlyenv}
+
+    \myissue<6-7 | only@5-7>{On a deux représentation de 0 qui sont \( {0000}_2 \) et \( {1111}_2 \).}
+
+     \item<7- | alert@9-> l'opposé d'un entier sur \( n \) bits est son complément à \( 2^n \) (abusivement appelé son complément à 2).
+
+\begin{onlyenv}<8>
+La représentation sur quatre bits de l'opposé de 1 est donc \( 2^4 - 1 = 15 = {1111}_2 \).
+
+On a donc :
+
+\begin{align*}
+    \begin{split}
+{0001}_2 + {1111}_2 &= {\cancel{1}0000}_2 = {0000}_2 \\
+\myhence 1 + (-1) &= 0
+    \end{split}
+\end{align*}
+
+\( {0000}_2 \) est aussi la seule représentation de 0.
+\end{onlyenv}
+
+\end{enumerate}
+
+\begin{onlyenv}<9->
+Pour représenter \myimp{un entier signé}, un entier qui peut avoir des valeurs négatives, les concepteurs d'architecture ont tous choisi la troisième méthode.
+
+Un entier signé sur \( n \) bits prend donc ses valeurs de \( -2^{n - 1} \) à \( 2^{n - 1} - 1\).
+
+Le bit de poids fort caractérise le signe de l'entier.
+
+On a, pour un nombre \( x \) encodé sur \( n \) bits :
+
+\begin{align*}
+    \begin{split}
+2^n - x &= \lnot x + 1 \\
+\text{ou encore } (1 \ll n) - x &= \lnot x + 1
+    \end{split}
+\end{align*}
+\end{onlyenv}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Les entiers et leur taille en mémoire}
+
+En C++, le standard est trompeur : la taille spécifiée des entiers n'est pas stricte mais minimale.
+
+\uncover<2->{Ainsi, on a :}
+
+\begin{enumerate}
+    \item<2-> \mykeyword{char} au moins \myimp{un octet},
+    \item<3-> \mykeyword{short} au moins \myimp{deux octets},
+    \item<4-> \mykeyword{int} au moins \myimp{deux octets},
+    \item<5-> \mykeyword{long} au moins \myimp{trois octets},
+    \item<6-> \mykeyword{long long} au moins \myimp{quatre octets}.
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Les modèles de données}
+
+La taille exacte de ces types dépend en réalité du \myimp{modèle de données} utilisé et dépend donc de :
+
+\begin{itemize}
+    \item<2-> la taille des \myimp{mots} de la machine cible,
+    \item<3-> le système d'exploitation de cette même machine.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Des alias bien pratiques}
+
+Comme les mots clefs précédents rendent la portabilité du code très complexe, on utilise, dans les faits, des alias qui assure que la taille de l'entier soit la bonne :
+
+\begin{center}
+    \begin{tabular}{||c||c||c|c||}
+\multirow{2}{*}{Type} & \multirow{2}{*}{Taille en mémoire (en octets)} & \multicolumn{2}{c||}{Plage de valeurs} \\
+\cline{3-4}
+&& Entier non signé & Entier signé \\
+\hline \hline
+\mykeyword{int8\_t} & 1 & \numrange{0}{255} & \numrange{-128}{127} \\
+\mykeyword{int16\_t} & 2 & \numrange{0}{65535} & \numrange{-32768}{32767} \\
+\mykeyword{int32\_t} & 4 & \numrange{0}{4,29e9} & \num{\pm 2,14e9} \\
+\mykeyword{int64\_t} & 8 & \numrange{0}{1,84e19} & \num{\pm 9,22e18}
+    \end{tabular}
+\end{center}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Dernières précisions}
+
+La version non signée de \mykeyword{int\( n \)\_t} est \myimp{\mykeyword{uint\( n \)\_t}}.
+
+\myimp{\mykeyword{int\_least\( n \)\_t}} assure que l'entier fait au moins \( n \) bits.
+
+\myimp{\mykeyword{int\_fast\( n \)\_t}} assure que l'entier est le plus rapide et fait au moins \( n \) bits.
+
+Pour utiliser ces alias, il faut mettre en début de fichier les lignes :
+
+\begin{lstlisting}[language = c++]
+#include <cstdint>
+
+using namespace std; // ne pas mettre plusieurs fois cette ligne
+\end{lstlisting}
+
+\end{frame}
+
+\subsection{Les littéraux}
+
+\begin{frame}[fragile]
+
+\frametitle{Les littéraux}
+
+\begin{definition}
+\mydef{Les littéraux} (ou \mydef{litterals}) sont, en C++, des unités syntaxiques qui représente les valeurs constantes intégrées aux langage.
+\end{definition}
+
+\begin{example}<2->
+
+Dans l'exemple ci-dessous, les unités syntaxiques à droites des signes \myimp{\mykeyword{=}} sont des littéraux.
+
+\begin{lstlisting}[language = c++]
+int a = 5;
+double b = 5.;
+\end{lstlisting}
+
+\end{example}
+
+\end{frame}
+
+\subsubsection{Les littéraux entiers}
+
+\begin{frame}[fragile]
+
+\frametitle{Un entier en décimal}
+
+En décimal, les chiffres autorisés sont \myimp{les chiffres décimaux classiques} :
+
+\begin{figure}
+\mykeyword{\textcolor{red}{<chiffres>}\textcolor{orange}{[suffixe]}}
+\caption{entier exprimé en décimal}
+\end{figure}
+
+\begin{example}<2->
+
+\begin{lstlisting}[language = c++]
+int a = 5;
+\end{lstlisting}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Une petite précision syntaxique}
+
+\mykeyword{\textcolor{orange}{suffixe}} détermine \myimp{le type de l'entier}.
+
+\begin{itemize}
+    \item<2-> \textcolor{orange}{aucun suffixe} : il s'agit au moins d'un \mykeyword{int} ;
+    \item<3-> \mykeyword{\textcolor{orange}{l}} ou \mykeyword{\textcolor{orange}{L}} : il s'agit au moins d'un \mykeyword{long int} ;
+    \item<4-> \mykeyword{\textcolor{orange}{ll}} ou \mykeyword{\textcolor{orange}{LL}} : il s'agit au moins d'un \mykeyword{long long int}.
+\end{itemize}
+
+\uncover<5->{\myimp{En base décimale}, les types sont des \myimp{types signés} ; à l'inverse, \myimp{pour les autres bases}, il peut s'agir de \myimp{types signés} ou \myimp{non signés}.}
+
+\uncover<6->{Pour imposer \myimp{un type non signé}, on peut ajouter (\myimp{potentiellement, en plus de ceux présentés ci-dessus}) le suffixe \mykeyword{\textcolor{orange}{u}} ou \mykeyword{\textcolor{orange}{U}}.}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Un entier en octal}
+
+En octal, les chiffres autorisés sont \myimp{les chiffres de \numrange{0}{7}}.
+
+\begin{figure}
+\mykeyword{0\textcolor{red}{<chiffres>}\textcolor{orange}{[suffixe]}}
+\caption{entier exprimé en octal}
+\end{figure}
+
+\mywarn<2->{L'octal n'est plus une base courante.}
+
+\begin{example}<3->
+
+\begin{lstlisting}[language = c++]
+unsigned int a = 010u; // a vaut 8 en décimal
+\end{lstlisting}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+En hexadécimal, les chiffres autorisés sont \myimp{les chiffres de \numrange{0}{9} et de a à f} (la syntaxe n'est pas sensible à la casse).
+
+\begin{figure}
+\mykeyword{0\textbf{(x|X)}\textcolor{red}{<chiffres>}\textcolor{orange}{[suffixe]}}
+\caption{entier exprimé en hexadécimal}
+\end{figure}
+
+\begin{example}<2->
+
+\begin{lstlisting}[language = c++]
+long long a = 0xaAbCdEfLL; // a vaut 179031535 en décimal
+unsigned long long b = 0X10ull; // a vaut 16 en décimal
+\end{lstlisting}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Les entiers en binaire}
+
+En binaire, les chiffres autorisés sont \myimp{les chiffres 0 et 1}.
+
+\begin{figure}
+\mykeyword{0\textbf{(b|B)}\textcolor{red}{<chiffres>}\textcolor{orange}{[suffixe]}}
+\caption{entier exprimé en binaire}
+\end{figure}
+
+\begin{example}<2->
+
+\begin{lstlisting}[language = c++]
+unsigned int a = 0B10u; // a vaut 2 en décimal
+int b = 0b01; // a vaut 1 en décimal
+\end{lstlisting}
+
+\end{example}
+
+\end{frame}
+
+\subsubsection{Les littéraux virgules flottantes}
+
+\begin{frame}
+
+\frametitle{Les flottants en décimal}
+
+\begin{figure}
+\mykeyword{\textcolor{red}{<chiffres>}\textbf{(e|E)}\textcolor{blue}{<exposant>}\textcolor{orange}{[suffixe]}} \\
+\mykeyword{.\textcolor{red}{<chiffres>}\textbf{(e|E)}\textcolor{blue}{[exposant]}\textcolor{orange}{[suffixe]}} \\
+\mykeyword{\textcolor{red}{[chiffres]}.\textcolor{red}{<chiffres>}\textbf{(e|E)}\textcolor{blue}{[exposant]}\textcolor{orange}{[suffixe]}}
+\caption{flottant exprimé en décimal}
+\end{figure}
+
+\uncover<2->{\mykeyword{\textcolor{red}{chiffres}} et \mykeyword{\textcolor{orange}{exposant}} constituent chacun une suite de chiffres en \myimp{écriture décimale}.}
+
+\uncover<3->{\mykeyword{\textcolor{orange}{suffixe}} détermine \myimp{le type du flottant}.}
+
+\begin{itemize}
+    \item<4-> \mykeyword{\textcolor{orange}{f}} ou \mykeyword{\textcolor{orange}{F}} : il s'agit d'un \mykeyword{float} ;
+    \item<5-> \textcolor{orange}{aucun suffixe} : il s'agit d'un \mykeyword{double} ;
+    \item<6-> \mykeyword{\textcolor{orange}{l}} ou \mykeyword{\textcolor{orange}{L}} : il s'agit d'un \mykeyword{long double}.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Un petit exemple}
+
+\begin{example}
+
+\begin{lstlisting}[language = c++]
+double a = 0.;
+double b = 1e3;
+float c = 1.2e2f
+long double d = .1L
+\end{lstlisting}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Les flottants en hexadécimal}
+
+\begin{figure}
+\mykeyword{0\textbf{(x|X)}\textcolor{red}{<chiffres>}\textbf{(p|P)}\textcolor{blue}{<exposant>}\textcolor{orange}{[suffixe]}} \\
+\mykeyword{0\textbf{(x|X)}.\textcolor{red}{<chiffres>}\textbf{(p|P)}\textcolor{blue}{[exposant]}\textcolor{orange}{[suffixe]}} \\
+\mykeyword{0\textbf{(x|X)}\textcolor{red}{[chiffres]}.\textcolor{red}{<chiffres>}\textbf{(p|P)}\textcolor{blue}{[exposant]}\textcolor{orange}{[suffixe]}}
+\caption{flottant exprimé en hexadécimal}
+\end{figure}
+
+\uncover<2->{\mykeyword{\textcolor{red}{chiffres}} est, cette fois-ci, une séquence de chiffres en \myimp{écriture hexadécimale}.}
+
+\uncover<4->{\mykeyword{\textcolor{blue}{exposant}} est constitué d'une séquence de chiffres en \myimp{écriture décimale}.}
+
+\mywarn<5->{\mykeyword{\textcolor{orange}{exposant}} n'implique plus une multiplication par une puissance de 10 mais par une puissance de 2.}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Un petit exemple pour la route}
+
+\begin{example}
+
+\begin{lstlisting}[language = c++]
+long double a = 0x10P2l; // a vaut 64
+float b       = 0X.1p4F; // b vaut 1
+double c      = 0X1.1p4; // c vaut 17
+\end{lstlisting}
+
+\end{example}
+
+\end{frame}
+
+\subsubsection{Les littéraux pour les caractères}
+
+\begin{frame}
+
+\frametitle{Les littéraux pour les caractères}
+
+\begin{figure}
+\mykeyword{\textcolor{orange}{[préfixe]}'\textcolor{red}{[caractère]}'}
+\caption{les littéraux pour les caractères}
+\end{figure}
+
+\uncover<2->{\mykeyword{\textcolor{orange}{préfixe}} détermine le type du caractère :}
+
+\begin{itemize}
+    \item<3-> \textcolor{orange}{sans préfixe} : il s'agit d'un \mykeyword{char} ;
+    \item<4-> \mykeyword{\textcolor{orange}{u8}} : c'est un \mykeyword{char} (cependant, il s'agit d'\myimp{un caractère Unicode} encodé en \myimp{UTF-8} sur \myimp{une seule unité de code}) ;
+    \item<5-> \mykeyword{\textcolor{orange}{u}} : il s'agit d'un \mykeyword{char16\_t} ;
+    \item<6-> \mykeyword{\textcolor{orange}{U}} : il s'agit d'un \mykeyword{char32\_t} ;
+    \item<7-> \mykeyword{\textcolor{orange}{L}} : il s'agit d'un \mykeyword{wchar\_t} ;
+\end{itemize}
+
+\end{frame}
+
+\subsection{Les tableaux}
+
+\begin{frame}
+
+\frametitle{Définition d'un tableau}
+
+\begin{definition}
+\mydef{Un tableau} est une succession continue d'éléments de même type en mémoire
+\end{definition}
+
+\begin{uncoverenv}<2->
+
+\begin{figure}
+\mykeyword{\textcolor{red}{<type>} \textcolor{blue}{<identifiant>}[\textcolor{teal}{<taille>}];}
+\caption{définition d'un tableau}
+\end{figure}
+
+\end{uncoverenv}
+
+\uncover<2->{On crée un tableau de \mykeyword{\textcolor{teal}{taille}} éléments de type \mykeyword{\textcolor{red}{type}} que l'on identifie par le nom \mykeyword{\textcolor{blue}{identifiant}}.}
+
+\mywarn<3->{La taille d'un tableau est statique : elle ne peut pas changer au cours de l'exécution du programme.}
+
+\uncover<4->{La taille d'un tableau caractérise son type.}
+
+\begin{example}<5->
+\mykeyword{int[5]} et \mykeyword{int[2]} sont tous deux des tableaux d'entiers mais ce sont deux types distincts.
+\end{example}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Accès aux éléments}
+
+Si on veut accéder au \mykeyword{\textcolor{teal}{n}}-ième élément de \mykeyword{\textcolor{red}{identifiant}} (les tableaux sont indexés à partir de 0), on utilise la syntaxe suivante :
+
+\begin{figure}
+\mykeyword{\textcolor{blue}{<identifiant>}[\textcolor{teal}{<n>}];}
+\caption{accès aux éléments d'un tableau}
+\end{figure}
+
+\mywarn<2->{Il n'y a aucune vérification de la taille du tableau : on accède à la \mykeyword{\textcolor{teal}{n}}-ième addresse mémoire suivant celle du premier élément du tableau.}
+
+\begin{example}<3->
+
+On a donc :
+
+\begin{lstlisting}[language = c++]
+int a[5] = {1, 2, 3, 4, 5};
+int a[10]; // cette ligne est valide
+\end{lstlisting}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Une petite astuce}
+
+Lorsque l'on initialise un tableau avec un nombre d'éléments données, on n'est pas obligé de spécifié sa \mykeyword{\textcolor{teal}{taille}} : elle est déterminée par inférence par le compilateur.
+
+\begin{example}<2->
+
+Les deux lignes suivantes sont valides et équivalentes :
+
+\begin{lstlisting}[language = c++]
+int tableau[5] = {1, 2, 3, 4, 5};
+int tableau[] = {1, 2, 3, 4, 5}; // tableau est cependant bien de type int[5]
+\end{lstlisting}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Une question de taille}
+
+La taille du tableau doit être \myimp{déterminée}, \myimp{strictement positive} et \myimp{suffisante}.
+
+\begin{example}<2->
+
+Ainsi, les deux lignes suivantes conduisent à une erreur à la compilation.
+
+\begin{lstlisting}[language = c++]
+int tableau[]; // quelle est la taille de tableau ?
+int tableau[0]; // certains compilateurs parviennent à la traiter mais ce comportement n'est pas standard
+\end{lstlisting}
+
+De plus, \mykeyword{\textcolor{teal}{taille}} ne doit pas nécessairement être strictement égale au nombre d'éléments lors de l'initialisation.
+
+\begin{lstlisting}[language = c++]
+int tableau[5] = {1, 2}; // tout va bien
+int tableau[1] = {1, 2}; // c'est le drame
+\end{lstlisting}
+
+\end{example}
+
+\end{frame}
+
+\subsection{Initialisation de variables}
+
+\begin{frame}
+
+\frametitle{Initialisation de variables}
+
+\mydef{L'initialisation} d'une variable consiste en l'affectation d'une valeur initiale à celle-ci.
+
+\uncover<2->{En C++, il existe \myimp{sept différents types d'initialisation} :}
+
+\begin{itemize}
+    \item<3-> \alert<10->{\emph{default initialization}},
+    \item<4-> \alert<10->{\emph{value initialization}},
+    \item<5-> \alert<10->{\emph{copy initialization}},
+    \item<6-> \alert<10->{\emph{list initialization}},
+    \item<7->\emph{direct initialization},
+    \item<8-> \emph{aggregate initialization},
+    \item<9-> \emph{reference initialization}.
+\end{itemize}
+
+\uncover<10->{Pour l'instant, on n'abordera que les quatre premières notions.}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{default initialization}
+
+La syntaxe utilisée est la suivante :
+
+\begin{figure}
+\mykeyword{\textcolor{red}{<type>} \textcolor{blue}{<identifiant>};}
+\caption{default initialization}
+\end{figure}
+
+Quand on initialise une variable avec cette syntaxe, rien de particulier n'est réalisé hormis l'allocation de la zone mémoire correspondante dans \myimp{la pile d'exécution} : elle a donc une valeur quelconque qui dépend de ce qu'il y avait avant à cette adresse mémoire.
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Une valeur quelconque ?}
+
+\begin{example}
+
+\begin{lstlisting}[language = c++]
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+    {
+        int tableau[] = {1, 2, 3, 4, 5};
+    } // tableau « meurt » ici
+
+    int un_autre_tableau[1];
+
+    cout << un_autre_tableau[2] << '\n';
+}
+\end{lstlisting}
+
+Dans l'exemple ci-dessus, que va-t-il se passer ?
+
+\myanswer<2->{Il sera imprimé \enquote{3} car c'est la valeur qui a été affectée à cette zone mémoire lors de l'initialisation de \mykeyword{tableau}.}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{value initialization}
+
+Les deux syntaxes suivantes sont acceptées :
+
+\begin{figure}
+\mykeyword{\textcolor{red}{<type>}();} \\
+\mykeyword{\textcolor{red}{<type>} \textcolor{blue}{<identifiant>}\{\};}
+\caption{value initialization}
+\end{figure}
+
+Quand on initialise une variable avec cette syntaxe, la zone mémoire correspondante à la variable \mykeyword{\textcolor{blue}{identifiant}} est initialisée à 0.
+
+\mywarn<2->{La première syntaxe retourne une \emph{rvalue}.}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{copy initialization}
+
+La syntaxe acceptée est la suivante :
+
+\begin{figure}
+\mykeyword{\textcolor{red}{<type>} \textcolor{blue}{<identifiant>} = \textcolor{teal}{<autre>}};
+\caption{copy initialization}
+\end{figure}
+
+Le principe de fonctionnement est le même que pour le \emph{direct initialization}.
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{list initialization}
+
+On pose \( n \in \mathbb{N}^* \).
+
+Les deux syntaxes suivantes sont acceptées :
+
+\begin{figure}
+\mykeyword{\textcolor{red}{<type>} \textcolor{blue}{<identifiant>}\{\textcolor{teal}{<argument1>}, \dots, \textcolor{teal}{<argument\( n \)>}\};} \\
+\mykeyword{\textcolor{red}{<type>} \textcolor{blue}{<identifiant>} = \{\textcolor{teal}{<argument1>}, \dots, \textcolor{teal}{<argument\( n \)>}\};}
+\caption{list initialization}
+\end{figure}
+
+Dans le premier cas, on parle de \myimp{direct list initialization}, dans le second, de \myimp{copy list initialization}.
+
+Ces syntaxes ne servent (pour l'instant) que pour l'initialisation de tableaux et elles sont toutes les deux équivalentes.
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Pour bien comprendre les différents types d'initialisation}
+
+\begin{example}
+
+\begin{lstlisting}[language = c++]
+int a;
+int d = 8;
+int e = {16};
+int f = int();
+int g{};
+int h[] = {1, 2, 3};
+\end{lstlisting}
+
+Dans l'exemple ci-dessus, quels sont les types d'initialisation utilisée ?
+
+\begin{enumerate}
+    \myanswerize
+
+    \item<visible@2-> \emph{default initialization},
+    \item<visible@3-> \emph{copy initialization},
+    \item<visible@4-> \emph{copy initialization (\emph{narrowing} interdit)},
+    \item<visible@5-> \emph{value initialization}, puis \emph{copy initialization},
+    \item<visible@6-> \emph{value initialization}.
+    \item<visible@7-> \emph{copy list initialization}.
+\end{enumerate}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Un autre mot clef pour la route}
+
+En C++, il est possible d'utiliser le mot clef \mykeyword{auto} \myimp{lors de l'initialisation d'une variable}.
+
+\begin{figure}
+\mykeyword{auto \textcolor{blue}{<identifiant>} = \textcolor{teal}{<autre>};}
+\caption{Utilisation de \mykeyword{auto}}
+\end{figure}
+
+Le type de \mykeyword{\textcolor{blue}{identifiant}} est déterminé à partir de \mykeyword{\textcolor{teal}{autre}} par inférence.
+
+\begin{example}<2->
+
+\begin{lstlisting}[language = c++]
+auto a = 0.; // a est un double
+auto b = 0.f; // b est un float
+auto c = 5uLL; // c est un unsigned long long
+auto d = false; // d est un bool
+auto e; // erreur car il n'est pas possible de déterminer de type
+\end{lstlisting}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}
+
+\centering\Large
+
+Merci pour votre écoute.
+
+\end{frame}
+
+\end{document}
