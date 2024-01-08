@@ -1,4 +1,6 @@
-baseURL = 'https://example.org/'
-languageCode = 'en-us'
-title = 'My New Hugo Site'
+baseURL = "https://beatussum.github.io/cppcourses/"
+defaultContentLanguage = "fr"
+enableEmoji = true
+enableGitInfo = true
+title = "Formation C++ 17"
 theme = "PaperMod"
