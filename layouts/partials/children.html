@@ -1,0 +1,13 @@
+{{ define "children" }}
+	{{ range .menu }}
+		{{ if not .Params.hidden }}
+			<li><a href="{{ .RelPermalink }}" >{{ .Title }}</a>{{ with .Description }}: {{ . }}{{ end }}</li>
+
+			{{ with (union .Sections .Pages) }}
+				<ul class="children children-li">
+					{{ template "children" dict "menu" .ByWeight }}
+				</ul>
+			{{ end }}
+		{{ end }}
+	{{ end }}
+{{ end }}

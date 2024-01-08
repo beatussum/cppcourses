@@ -1,0 +1,17 @@
+{{ define "main" }}
+	<div id="chapter">
+		<div id="body-inner">
+			{{ if not .IsHome }}
+				<h1>{{ if eq .Kind "taxonomy" }}{{.Kind}} :: {{ end }}{{.Title}}</h1>
+			{{ end }}
+
+			{{ with .Content }}
+				{{ . }}
+			{{ else }}
+				{{ with (union .Page.Sections .Page.Pages) }}
+					{{ template "children" dict "menu" .ByWeight }}
+				{{ end }}
+			{{ end }}
+		</div>
+	</div>
+{{ end }}

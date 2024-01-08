@@ -1,0 +1,81 @@
+@charset "UTF-8";
+
+div.notices { padding: 15px 0px; }
+
+div.notices blockquote
+{
+    border-left: 10px solid #bfc3ce;
+    margin: 15px;
+}
+
+div.notices blockquote p
+{
+    color: #999;
+    font-size: 1.1rem;
+    padding: unset;
+}
+
+div.notices ol, ul { margin: 4px 0px }
+div.notices p { padding: 0px 15px; }
+div.notices p:first-child:after { top: -28px; }
+div.notices p:first-child:before { top: -27px; }
+div.notices pre { margin: 15px; }
+
+
+div.notices.info
+{
+    border-top: 30px solid #10b5df;
+    background: #c8f2ff;
+}
+
+div.notices.info p
+{
+    border-top: unset;
+    background: unset;
+}
+
+div.notices.info p:first-child:after { content: "Information"; }
+
+div.notices.warning
+{
+    border-top: 30px solid rgba(217, 83, 79, 0.8);
+    background: #FAE2E2;
+}
+
+div.notices.warning p
+{
+    border-top: unset;
+    background: unset;
+}
+
+div.notices.warning p:first-child:after { content: "Attention"; }
+
+div.notices.note
+{
+    border-top: 30px solid #eaa4ff;
+    background: #e9d6ff;
+}
+
+div.notices.note p
+{
+    border-top: unset;
+    background: unset;
+}
+
+div.notices.note p:first-child:after { content: "À noter"; }
+
+div.notices.tip
+{
+    border-top: 30px solid rgba(92, 184, 92, 0.8);
+    background: #E6F9E6;
+}
+
+div.notices.tip p
+{
+    border-top: unset;
+    background: unset;
+}
+
+div.notices.tip p:first-child:after { content: "Astuce"; }
+
+h3 { font-size: 1.5rem; }
