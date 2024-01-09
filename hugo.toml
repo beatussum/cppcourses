@@ -5,16 +5,20 @@ enableGitInfo = true
 title = "Formation C++ 17"
 theme = "hugo-theme-learn"
 
+[[languages.fr.menu.shortcuts]]
+name = "<i class='fab fa-github'></i> Dépôt GitHub"
+url = "https://github.com/beatussum/cppcourses/"
+
+[outputs]
+home = ["HTML", "RSS", "JSON"]
+
 [params]
 author = "Mattéo Rossillol‑‑Laruelle"
 custom_css = ["css/override.css"]
 description = "Formations C++ 17 dispensée à l'ENSIMAG pendant l'année scolaire 2023-2024"
 editURL = "https://github.com/beatussum/cppcourses/edit/develop/content/"
+disableMermaid = true
 disableNextPrev = true
 themeVariant = "blue"
 titleSeparator = "::"
 
-[languages]
-[[languages.fr.menu.shortcuts]]
-name = "<i class='fab fa-github'></i> Dépôt GitHub"
-url = "https://github.com/beatussum/cppcourses/"
