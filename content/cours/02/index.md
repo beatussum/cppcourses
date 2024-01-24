@@ -1,6 +1,6 @@
 ---
 title: "Second cours"
-weight: 2
+weight: 02
 ---
 
 Ce cours a été dispensé **le jeudi 25/01/2024**, **entre 16h et 18h**, en **D111** à **l'ENSIMAG**.
