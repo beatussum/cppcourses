@@ -1,0 +1,1343 @@
+\documentclass{cppcourses}
+
+\title[Formation C++ 17]{
+    Formation C++ 17 \no 02 \\
+    \small{Portées, opérateurs, structures de contrôle et fonctions}
+}
+
+\begin{document}
+
+\frame{\titlepage}
+\frame{\tableofcontents[pausesections, subsubsectionstyle = hide]}
+
+\section{Avant-propos}
+
+\begin{frame}
+
+\frametitle{Avant-propos}
+
+Avant de commencer, il est important de rappeler que ce cours est réalisé par \myimp{un étudiant}.
+
+Par conséquent, il n'a pas la même fiabilité qu'un cours dispensé par \myimp{un réel enseignant de l'ENSIMAG}.
+
+N'utilisez pas ce cours comme \myimp{un argument d'autorité} !
+
+Si un professeur semble, a posteriori, contredire des éléments apportés par ce cours, \myimp{il a très probablement raison}.
+
+Ce document est \myimp{vivant} : je veillerai à corriger les coquilles ou erreurs plus problématiques.
+
+\end{frame}
+
+\section{Portées}
+
+\subsection{Une vision générale de la chose}
+
+\begin{frame}
+
+\frametitle{Portées}
+
+\begin{definition}
+\mydef{Une portée} (ou \mydef{\emph{scope}}) est une portion, potentiellement discontinue (on verra des exemples concrets lorsque l'on parlera d'\myimp{unité de traduction}), dans laquelle des entités données (variables, objets, etc.) \emph{vivent}.
+\end{definition}
+
+\uncover<2->{Dans un premier temps, on considérera que, en C++, \myimp{les \emph{scopes}} sont définis par un bloc délimité, d'un côté, par \mykeyword{\{} et, de l'autre, par par \mykeyword{\}}.}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Quelques exemples}
+
+\begin{example}<only@1>
+
+Le code suivant montre l'exemple de la portée définie par la fonction \mykeyword{main()} :
+
+\begin{lstlisting}[language = c++]
+int main(int argc, char* argv[])
+{
+    int ma_variable_locale;
+}
+\end{lstlisting}
+
+Dans l'exemple ci-dessus, \mykeyword{argc} et \mykeyword{argv}, en tant que paramètres, sont des variables qui n'existent que dans la portée de la fonction \mykeyword{main()}, tout comme \mykeyword{ma\_variable\_locale} qui, hors de cette fonction, cesse également d'exister.
+
+\end{example}
+
+\begin{example}<only@2->
+
+On peut définir une portée dans n'importe quelle portée parente.
+
+\begin{lstlisting}[language = c++]
+int main(int argc, char* argv[])
+{
+    int ma_variable_locale;
+
+    {
+        int une_variable_dans_une_autre_portee;
+    } // une_variable_dans_une_autre_portee « meure » ici
+
+    int une_autre_variable_locale;
+} // les autres variables « meurent » là
+\end{lstlisting}
+
+\end{example}
+
+\end{frame}
+
+\subsection{Les espaces de noms}
+
+\begin{frame}
+
+\frametitle{Les espaces de noms}
+
+\begin{definition}
+\mydef{Un espace de nommage} (ou \mydef{\emph{namespace}}) est ce que l'on pourrait voir comme une portée nommée.
+\end{definition}
+
+\uncover<2->{Il permet d'éviter de polluer \myimp{la portée globale} et d'avoir donc une meilleure structuration de son code.}
+
+\uncover<3->{Comme première approximation, on pourrait le voir comme l'équivalent d'\myimp{un module en Python}.}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Déclaration d'un espace de noms}
+
+\begin{figure}
+\mykeyword{namespace \textcolor{red}{<identifiant>} \{ \textcolor{blue}{<corps>} \}}
+\caption{Déclaration d'un espace de noms}
+\end{figure}
+
+On déclare un espace de noms portant le nom \mykeyword{\textcolor{red}{identifiant}} et ayant pour corps \mykeyword{\textcolor{blue}{corps}} : ce dernier peut contenir tout ce que pourrait avoir une portée classique.
+
+\begin{uncoverenv}<2->
+
+Pour accéder à \myimp{un membre} de l'espace de noms, on utilise la syntaxe suivante :
+
+\begin{figure}
+\mykeyword{\textcolor{red}{<espace de noms>}::\textcolor{blue}{<membre>}}
+\caption{Accès aux membres}
+\end{figure}
+
+\end{uncoverenv}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Un petit cas concret}
+
+\begin{example}
+
+\begin{lstlisting}[language = c++]
+#include <cstdint>
+
+using namespace std;
+
+namespace lib
+{
+    uint8_t un = 1;
+
+    bool est_pair(uint8_t __a)
+    {
+        return ((__a % 2) == 0);
+    }
+}
+
+int main()
+{
+    bool un_booleen = lib::est_pair(2 + lib::un);
+}
+\end{lstlisting}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{\emph{Utilisation} d'un espace de noms}
+
+Avec la syntaxe suivante, on va pouvoir \emph{polluer} \myimp{la portée dans laquelle on se trouve}, en accédant aux membres de l'espace de noms \mykeyword{\textcolor{red}{espace de noms}} sans les préfixer par \mykeyword{\textcolor{red}{<espace de noms>}::}.
+
+\begin{figure}
+\mykeyword{using namespace \textcolor{red}{<espace de noms>};}
+\caption{\emph{Utilisation} d'un espace de noms}
+\end{figure}
+
+\mywarn<2->{
+On peut mettre ce \emph{statement} dans n'importe quelle portée.
+
+Il doit cependant être avant l'endroit où on utilise son effet.
+}
+
+\begin{uncoverenv}<3->
+
+Cette syntaxe serait donc l'équivalente, en \myimp{Python}, de
+
+\begin{figure}
+\mykeyword{import * from \textcolor{red}{<module>}}
+\end{figure}
+
+\end{uncoverenv}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Un exemple}
+
+\begin{example}
+
+En reprenant le code précédent, on se ramène à :
+
+\begin{lstlisting}[language = c++]
+#include <cstdint>
+
+using namespace std;
+
+namespace lib
+{
+    uint8_t un = 1;
+
+    bool est_pair(uint8_t __a)
+    {
+        return ((__a % 2) == 0);
+    }
+}
+
+int main()
+{
+    using namespace lib;
+
+    bool un_booleen = est_pair(2 + un);
+    bool un_autre_booleen = lib::est_pair(2 + lib::un); // cette ligne fonctionne également
+
+    // si `using namespace lib;` avait été ici, on aurait eu une erreur à la compilation
+}
+\end{lstlisting}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Une petite précision}
+
+Au lieu d'\emph{importer} tous les membres d'un espace de noms, on peut n'en sélectionner que quelques-uns :
+
+\begin{figure}
+\mykeyword{using \textcolor{red}{<espace de noms>}::\textcolor{blue}{<membre>};}
+\caption{\emph{Utilisation} d'un membre d'un espace de noms}
+\end{figure}
+
+\begin{uncoverenv}<3->
+
+Cette syntaxe serait donc l'équivalente, en \myimp{Python}, de
+
+\begin{figure}
+\mykeyword{import \textcolor{blue}{<membre>} from \textcolor{red}{<module>}}
+\end{figure}
+
+\end{uncoverenv}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\begin{example}
+
+Avec cette nouvelle syntaxe, l'exemple précédent donnerait :
+
+\begin{lstlisting}[language = c++]
+#include <cstdint>
+
+using namespace std;
+
+namespace lib
+{
+    uint8_t un = 1;
+
+    bool est_pair(uint8_t __a)
+    {
+        return ((__a % 2) == 0);
+    }
+}
+
+int main()
+{
+    using lib::est_pair;
+    using lib::un;
+
+    bool un_booleen = est_pair(2 + un);
+}
+\end{lstlisting}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{La révélation}
+
+Avec ce que l'on a dit précédemment la ligne \myimp{\mykeyword{using namespace std;}} que l'on retrouvait un peu partout n'a plus aucun secret pour vous.
+
+\uncover<2->{Les \emph{statements} que l'on vient d'introduire sont, \myimp{dans la grande majorité des cas (mais pas tous)}, à éviter car ils \myimp{\emph{polluent} la portée dans laquelle on travaille} et \myimp{déstructurent donc le code} : \myimp{ce qui va à l'encontre de l'intérêt des espace de noms}.}
+
+\mywarn<3->{Dans la suite du cours, on n'utilisera donc plus \myimp{\mykeyword{using namespace std;}}.}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Les espaces de noms \mykeyword{inline}}
+
+Avec la syntaxe suivante, on va pouvoir déclarer un espace de noms qui \emph{pollue} tout seul \myimp{la portée dans laquelle on se trouve} :
+
+\begin{figure}
+\mykeyword{inline namespace \textcolor{red}{<identifiant>} \{ \textcolor{blue}{<corps>} \}}
+\caption{Déclaration d'un espace de noms \mykeyword{inline}}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Un petit exemple}
+
+\begin{example}
+
+Toujours en reprenant le code de tout à l'heure, on pourrait se ramener à :
+
+\begin{lstlisting}[language = c++]
+#include <cstdint>
+
+namespace lib
+{
+    inline namespace variables
+    {
+        inline namespace nombres { std::uint8_t un = 1; }
+    }
+
+    inline namespace fonctions
+    {
+        bool est_pair(std::uint8_t __a) { return ((__a % 2) == 0); }
+    }
+}
+
+int main()
+{
+    using lib::un;
+
+    bool un_booleen = lib::est_pair(2 + un);
+}
+\end{lstlisting}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Les alias}
+
+Comme pour les types, on peut \emph{renommer} les espaces de noms :
+
+\begin{figure}
+\mykeyword{namespace \textcolor{blue}{<autre nom>} = \textcolor{red}{<espace de noms>};}
+\caption{Déclaration d'un alias pour un espace de noms}
+\end{figure}
+
+\begin{uncoverenv}<2->
+
+Cette syntaxe serait donc l'équivalente, en \myimp{Python}, de
+
+\begin{figure}
+\mykeyword{import \textcolor{red}{<module>} as \textcolor{blue}{<autre nom>}}
+\end{figure}
+
+\end{uncoverenv}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Une facilité syntaxique}
+
+Les deux codes suivant sont strictement équivalent :
+
+\begin{lstlisting}[language = c++]
+namespace lib
+{
+    namespace fonctions
+    {
+        bool est_pair(std::uint8_t __a) { return ((__a % 2) == 0); }
+    }
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language = c++]
+namespace lib::fonctions
+{
+    bool est_pair(std::uint8_t __a) { return ((__a % 2) == 0); }
+}
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Pour faire le point sur tout ça}
+
+\begin{example}
+
+\begin{lstlisting}[language = c++]
+#include <cstdint>
+#include <iostream>
+
+namespace lib
+{
+    namespace a::variables::cardinaux { std::uint16_t premier = 0; }
+    namespace b { namespace variables::cardinaux { std::uint16_t premier = 1; } }
+    inline namespace c { namespace variables::cardinaux { std::uint16_t premier = 2; } }
+}
+
+using lib::variables::cardinaux::premier;
+namespace a = lib::b;
+
+int main(int argc, char* argv[])
+{
+    using namespace lib::a;
+
+    std::cout << premier << '\n';
+    std::cout << ::a::variables::cardinaux::premier << '\n';
+    std::cout << lib::variables::cardinaux::premier << '\n';
+    std::cout << variables::cardinaux::premier << '\n';
+}
+\end{lstlisting}
+
+Dans l'exemple ci-dessus que va-t-il se passer et pourquoi ?
+
+\myanswer<2->{Il sera imprimé, dans l'ordre, dans la console \enquote{2}, \enquote{1}, \enquote{2} et \enquote{0}.}
+
+\end{example}
+
+\end{frame}
+
+\section{Opérateurs}
+
+\subsection{Similitudes et différences avec Python}
+
+\begin{frame}[fragile]
+
+\frametitle{Un opérateur bien singulier}
+
+Dans ce transparent et les suivants, \mykeyword{a} et \mykeyword{b} désignent \myimp{deux expressions compatibles}.
+
+\begin{uncoverenv}<2->
+
+\begin{figure}
+\mykeyword{a\textcolor{red}{,} b}
+\caption{L'opérateur virgule}
+\end{figure}
+
+L'opérande de gauche est évalué, puis son résultat est écrasé et l'opérande de droite est évalué : ainsi, \mykeyword{a\textcolor{red}{,} b} a pour valeur \mykeyword{b}.
+
+\end{uncoverenv}
+
+\begin{example}<3->
+
+\begin{lstlisting}[language = c++]
+#include <iostream>
+
+int main()
+{
+    std::cout << (5.5, 5) << '\n';
+}
+\end{lstlisting}
+
+Que sera-t-il imprimé en console dans l'exemple ci-dessus ?
+
+\myanswer<4->{Il sera imprimé \enquote{5}.}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Opérateurs étudiés en Python}
+
+Certains opérateurs existent \myimp{en C++} aussi bien qu'\myimp{en Python}, et ont la même forme syntaxique.
+
+\begin{onlyenv}<1>
+
+\begin{columns}
+    \begin{column}{0.5\textwidth}
+        \begin{figure}
+\mykeyword{\textcolor{red}{+}a} \\
+\mykeyword{\textcolor{red}{-}a}
+\caption{Opérateurs unitaires}
+        \end{figure}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+        \begin{figure}
+\mykeyword{a \textcolor{red}{=} b}
+\caption{Opérateur de copie}
+        \end{figure}
+    \end{column}
+\end{columns}
+
+\end{onlyenv}
+
+\begin{onlyenv}<2>
+
+\begin{columns}
+    \begin{column}{0.5\textwidth}
+        \begin{figure}
+\mykeyword{a \textcolor{red}{+} b} \\
+\mykeyword{a \textcolor{red}{-} b} \\
+\mykeyword{a \textcolor{red}{*} b} \\
+\mykeyword{a \textcolor{red}{/} b} \\
+\mykeyword{a \textcolor{red}{\%} b}
+\caption{Opérateurs arithmétiques}
+        \end{figure}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+        \begin{figure}
+\mykeyword{a \textcolor{red}{+=} b} \\
+\mykeyword{a \textcolor{red}{-=} b} \\
+\mykeyword{a \textcolor{red}{*=} b} \\
+\mykeyword{a \textcolor{red}{/=} b} \\
+\mykeyword{a \textcolor{red}{\%=} b}
+\caption{Opérateurs d'affectation associés}
+        \end{figure}
+    \end{column}
+\end{columns}
+
+\end{onlyenv}
+
+\begin{onlyenv}<3>
+
+\begin{figure}
+\mykeyword{a \textcolor{red}{==} b} \\
+\mykeyword{a \textcolor{red}{!=} b} \\
+\mykeyword{a \textcolor{red}{<} b} \\
+\mykeyword{a \textcolor{red}{>} b} \\
+\mykeyword{a \textcolor{red}{<=} b} \\
+\mykeyword{a \textcolor{red}{>=} b}
+\caption{Opérateurs de comparaison}
+\end{figure}
+
+\end{onlyenv}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Une petite nuance qui a son importance}
+
+Contrairement \myimp{en Python}, \myimp{en C++}, les opérateurs d'affectation ont un retour : l'évaluation des opérations d'affectation a une valeur.
+
+\begin{example}<2->
+
+\begin{lstlisting}[language = c++]
+#include <cstdint>
+#include <iostream>
+
+int main()
+{
+    std::uint32_t a = 0;
+
+    std::cout << (a += 1) << '\n';
+    std::cout << (a -= 1) << '\n';
+    std::cout << (a = 5) << '\n';
+    std::cout << (a *= 2) << '\n';
+    std::cout << (a /= 3) << '\n';
+    std::cout << (a %= 3) << '\n';
+}
+\end{lstlisting}
+
+Que sera-t-il imprimé sur la ligne de commande ?
+
+\myanswer<3->{Il sera imprimé, dans cette ordre, \enquote{1}, \enquote{0}, \enquote{5}, \enquote{10}, \enquote{3}, \enquote{0}.}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Opérateurs d'incrémentation et de décrémentation}
+
+\begin{columns}
+    \begin{column}{0.5\textwidth}
+        \begin{figure}
+\mykeyword{\textcolor{red}{++}a} \\
+\mykeyword{\textcolor{red}{--}a}
+\caption{Opérateurs de préincrémentation et de prédécrémentation}
+        \end{figure}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+        \begin{figure}
+\mykeyword{a\textcolor{red}{++}} \\
+\mykeyword{a\textcolor{red}{--}}
+\caption{Opérateurs de postincrémentation et de postdécrémentation}
+\end{figure}
+    \end{column}
+\end{columns}
+
+\uncover<2->{Les expressions précédentes sont équivalentes à :}
+
+\begin{columns}<2->
+    \begin{column}{0.5\textwidth}
+        \begin{figure}
+\mykeyword{a += 1} \\
+\mykeyword{a -= 1}
+\caption{Opérateurs de préincrémentation et de prédécrémentation (équivalent)}
+        \end{figure}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+        \begin{figure}
+\mykeyword{a += 1, a - 1} \\
+\mykeyword{a -= 1, a + 1}
+\caption{Opérateurs de postincrémentation et de postdécrémentation (équivalent)}
+        \end{figure}
+    \end{column}
+\end{columns}
+
+\begin{uncoverenv}<3->
+
+\myimp{Les opérateurs de postincrémentation et de postdécrémentation} font intervenir une variable temporaire : \myimp{ils sont donc moins performants}.
+
+\myimp{Dans la majorité des cas}, on préférera utiliser \myimp{les opérateurs de préincrémentation et de prédécrémentation}.
+
+\end{uncoverenv}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Pour bien saisir la différence}
+
+\begin{example}
+
+\begin{lstlisting}[language = c++]
+#include <cstdint>
+#include <iostream>
+
+int main()
+{
+    std::uint32_t a = 0;
+
+    std::cout << a++ << '\n';
+    std::cout << ++a << '\n';
+    std::cout << --a << '\n';
+    std::cout << a-- << '\n';
+}
+\end{lstlisting}
+
+Que sera-t-il imprimé sur la ligne de commande ?
+
+\myanswer<2->{Il sera imprimé, dans cet ordre, \enquote{0}, \enquote{2}, \enquote{1}, \enquote{1}.}
+
+\end{example}
+
+\end{frame}
+
+\subsection{Les opérateurs bit-à-bit}
+
+\subsubsection{Éléments de syntaxe}
+
+\begin{frame}
+
+\frametitle{Opérateurs bit-à-bit}
+
+\begin{figure}
+\mykeyword{\textcolor{red}{\~{}}a}
+\caption{Opérateur unitaire}
+\end{figure}
+
+\begin{columns}
+    \begin{column}{0.5\textwidth}
+        \begin{figure}
+\mykeyword{a \textcolor{red}{\&} b} \\
+\mykeyword{a \textcolor{red}{|} b} \\
+\mykeyword{a \textcolor{red}{\^{}} b} \\
+\mykeyword{a \textcolor{red}{<<} b} \\
+\mykeyword{a \textcolor{red}{>>} b}
+\caption{Opérateurs arithmétiques}
+            \end{figure}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{figure}
+\mykeyword{a \textcolor{red}{\&=} b} \\
+\mykeyword{a \textcolor{red}{|=} b} \\
+\mykeyword{a \textcolor{red}{\^{}=} b} \\
+\mykeyword{a \textcolor{red}{<<=} b} \\
+\mykeyword{a \textcolor{red}{>>=} b}
+\caption{Opérateurs d'affectation associés}
+        \end{figure}
+    \end{column}
+\end{columns}
+
+\end{frame}
+
+\subsubsection{Tables de vérité}
+
+\begin{frame}[fragile]
+
+\frametitle{NOT}
+
+\begin{center}
+    \begin{tabular}{c||c|c}
+a & 0 & 1 \\
+\hline \hline
+NOT a & 1 & 0
+    \end{tabular}
+\end{center}
+
+\begin{example}<2->
+
+\begin{lstlisting}[language = c++]
+#include <iostream>
+
+int main()
+{
+    std::uint8_t a = 0b00000001;
+
+    std::cout << static_cast<int>(~a) << '\n';
+}
+\end{lstlisting}
+
+Que sera-t-il imprimé en console ?
+
+\myanswer<3->{Il sera imprimé \enquote{254}.}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{AND}
+
+\begin{center}
+    \begin{tabular}{c||c|c}
+\backslashbox{a}{b} & 0 & 1 \\
+\hline \hline
+0 & 0 & 0 \\
+\hline
+1 & 0 & 1
+    \end{tabular}
+\end{center}
+
+\begin{example}<2->
+
+\begin{lstlisting}[language = c++]
+#include <iostream>
+
+int main()
+{
+    std::uint8_t a = 0b11111111;
+    std::uint8_t b = 0b00000001;
+
+    std::cout << static_cast<int>(a & b) << '\n';
+}
+\end{lstlisting}
+
+Que sera-t-il imprimé en console ?
+
+\myanswer<3->{Il sera imprimé \enquote{1}.}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{OR}
+
+\begin{center}
+    \begin{tabular}{c||c|c}
+\backslashbox{a}{b} & 0 & 1 \\
+\hline \hline
+0 & 0 & 1 \\
+\hline
+1 & 1 & 1
+    \end{tabular}
+\end{center}
+
+\begin{example}<2->
+
+\begin{lstlisting}[language = c++]
+#include <iostream>
+
+int main()
+{
+    std::uint8_t a = 0b11111111;
+    std::uint8_t b = 0b00000001;
+
+    std::cout << static_cast<int>(a | b) << '\n';
+}
+\end{lstlisting}
+
+Que sera-t-il imprimé en console ?
+
+\myanswer<3->{Il sera imprimé \enquote{255}.}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{XOR}
+
+\begin{center}
+    \begin{tabular}{c||c|c}
+\backslashbox{a}{b} & 0 & 1 \\
+\hline \hline
+0 & 0 & 1 \\
+\hline
+1 & 1 & 0
+    \end{tabular}
+\end{center}
+
+\begin{example}<2->
+
+\begin{lstlisting}[language = c++]
+#include <iostream>
+
+int main()
+{
+    std::uint8_t a = 0b11111111;
+    std::uint8_t b = 0b00000001;
+
+    std::cout << static_cast<int>(a ^ b) << '\n';
+}
+\end{lstlisting}
+
+Que sera-t-il imprimé en console ?
+
+\myanswer<3->{Il sera imprimé \enquote{254}.}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Décalage de bits}
+
+Il faut comprendre l'effet de cette opération de manière littérale. Pour \myimp{un décalage à gauche} (resp. \myimp{à droite}), on jette \myimp{les bits de poids forts} (resp. \myimp{de poids faibles}) et on fait apparaître des zéros au niveau des \myimp{bits de poids faibles} (resp. \myimp{poids forts}).
+
+\begin{remark}
+\myimp{Un décalage de \( n \) bits vers la gauche} (resp. \myimp{vers la droite}) correspond à \myimp{une multiplication} (resp. \myimp{une division}) par \( 2^n \).
+\end{remark}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Un petit exemple}
+
+\begin{example}
+
+\begin{lstlisting}[language = c++]
+#include <iostream>
+
+int main()
+{
+    std::uint8_t a = 0b00000001;
+
+    std::cout << static_cast<int>(a <<= 5) << '\n';
+    std::cout << static_cast<int>(a >> 10) << '\n';
+}
+\end{lstlisting}
+
+Que sera-t-il imprimé sur la ligne de commande ?
+
+\myanswer<2->{Il sera imprimé \enquote{32}, puis \enquote{0}.}
+
+\end{example}
+
+\end{frame}
+
+\section{Structures de contrôle}
+
+\subsection{Avant de commencer}
+
+\begin{frame}
+
+\frametitle{Structures de contrôle}
+
+\begin{definition}
+\mydef{Une strucuture de contrôle} est une instruction particulière, dans \myimp{un langage de programmation impératif}, pouvant dévier l'ordre dans lequel sont exécutées certaines instructions du programme.
+\end{definition}
+
+\end{frame}
+
+\subsection{Les instructions de conditionnement}
+
+\begin{frame}
+
+\frametitle{\mykeyword{if}, \mykeyword{else if} et \mykeyword{else}}
+
+\begin{columns}
+    \begin{column}{0.5\textwidth}
+        \begin{figure}
+\mykeyword{if (\textcolor{red}{<condition>}) \{ \textcolor{blue}{[corps]} \}} \\
+\mykeyword{else if (\textcolor{red}{<condition>}) \{ \textcolor{blue}{[corps]} \}} \\
+\mykeyword{else \{ \textcolor{blue}{[corps]} \}}
+\caption{Instructions en C++}
+        \end{figure}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+        \begin{figure}
+\mykeyword{if \textcolor{red}{<condition>}: \textcolor{blue}{[corps]}} \\
+\mykeyword{elif \textcolor{red}{<condition>}: \textcolor{blue}{[corps]}} \\
+\mykeyword{else: \textcolor{blue}{[corps]}}
+\caption{Instructions en Python}
+        \end{figure}
+    \end{column}
+\end{columns}
+
+\mywarn<2->{En C++, la présence des parenthèses est obligatoire.}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Trop de \mykeyword{else if}}
+
+On peut transformer le code
+
+\begin{lstlisting}[language = c++]
+if (a == 'a') {
+    std::cout << "Il s'agit de la 1ere lettre de l'alphabet" << '\n';
+/* *** Tout le reste *** */
+} else if (a == 'z') {
+    std::cout << "Il s'agit de la 26e lettre de l'alphabet" << '\n';
+} else {
+    std::cout << "Le caractère n'est pas reconnu" << '\n';
+}
+\end{lstlisting}
+
+en
+
+\begin{lstlisting}[language = c++]
+switch (a) {
+    case 'a':
+        std::cout << "Il s'agit de la 1ere lettre de l'alphabet" << '\n';
+        break;
+    /* *** Tout le reste *** */
+    case 'z':
+        std::cout << "Il s'agit de la 26e lettre de l'alphabet" << '\n';
+        break;
+     default:
+        std::cout << "Le caractère n'est pas reconnu" << '\n';
+        break;
+}
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Un petit point syntaxique}
+
+\begin{figure}
+\mykeyword{switch (\textcolor{teal}{<initialisation>}; \textcolor{red}{<condition>}) \{ \textcolor{blue}{[bloc]} \}} \\
+\mykeyword{switch (\textcolor{red}{<condition>}) \{ \textcolor{blue}{[bloc]} \}}
+\caption{Le \emph{statement} \mykeyword{switch}}
+\end{figure}
+
+\begin{itemize}
+    \item<2-> \mykeyword{\textcolor{teal}{initialisation}} est \myimp{une expression} ou \myimp{une déclaration} dont la porté des entités est celle de \mykeyword{\textcolor{blue}{bloc}}.
+    \item<3-> \mykeyword{\textcolor{red}{condition}} est soit \myimp{une expression} soit \myimp{une déclaration} (la valeur de l'entité déclaré est alors utilisée).
+\end{itemize}
+
+\uncover<4->{\mykeyword{\textcolor{blue}{bloc}} est constitué de :}
+
+\begin{itemize}
+    \item<5-> \mykeyword{case \textcolor{magenta}{<expression constante>}: \textcolor{orange}{<\emph{statement}>}}
+    \item<6-> \mykeyword{default: \textcolor{orange}{<\emph{statement}>}}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Une petite précision}
+
+\begin{warning}
+\myimp{Le mot-clef \mykeyword{break}, dans l'exemple précédent, a son importance !} Sans celui-ci, si \myimp{\mykeyword{a}} valait \myimp{\mykeyword{'c'}}, on aurait eu dans la console :
+
+\begin{verbatim}
+Il s'agit de la 3e lettre de l'alphabet
+...
+Il s'agit de la 26e lettre de l'alphabet
+Le caractère n'est pas reconnu
+\end{verbatim}
+
+\end{warning}
+
+\begin{remark}<2->
+\myimp{Les \mykeyword{case}s} définissent en réalité des \myimp{\emph{labels}} qui sont donc utilisables avec \myimp{un \mykeyword{goto}}.
+\end{remark}
+
+\begin{remark}<3->
+Le conditionnement avec \mykeyword{switch} est \myimp{plus rapide} car le compilateur le retraduit sous la forme d'une \myimp{\emph{jump table}}.
+\end{remark}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{L'opérateur ternaire}
+
+\begin{figure}
+\mykeyword{\textcolor{red}{<condition>} ? \textcolor{orange}{<a>} : \textcolor{magenta}{<b>}}
+\caption{L'opérateur ternaire}
+\end{figure}
+
+Si \mykeyword{\textcolor{red}{condition}} est vraie (resp. fausse), alors \mykeyword{\textcolor{red}{condition} ? \textcolor{orange}{a} : \textcolor{magenta}{b}} est évalué en \mykeyword{\textcolor{orange}{a}} (resp. \mykeyword{\textcolor{magenta}{b}}).
+
+\begin{warning}<2->
+\mykeyword{\textcolor{orange}{a}} et \mykeyword{\textcolor{orange}{b}} doivent être deux types compatibles.
+\end{warning}
+
+\begin{example}<3->
+
+\begin{lstlisting}[language = c++]
+std::cout << ((argc == 1) : argv[0] : argv[1]) << '\n';
+\end{lstlisting}
+
+Dans l'exemple ci-dessus que va-t-il être imprimé en console et dans quelle condition ?
+
+\myanswer<4->{Il sera imprimé le nom du programme si aucun argument n'est passé en ligne de commande ; sinon, il sera imprimé le premier argument.}
+
+\end{example}
+
+\end{frame}
+
+\subsection{Les boucles}
+
+\begin{frame}
+
+\frametitle{Quelques boucles déjà connues grâce à Python}
+
+\begin{figure}
+\mykeyword{while (\textcolor{red}{<condition>}) \{ \textcolor{blue}{[corps]} \}} \\
+\mykeyword{for (\textcolor{teal}{<déclaration>} : \textcolor{red}{<expression>}) \{ \textcolor{blue}{[corps]} \}}
+\caption{Instructions en C++}
+\end{figure}
+
+\begin{figure}
+\mykeyword{while \textcolor{red}{<condition>}: \textcolor{blue}{[corps]}} \\
+\mykeyword{for \textcolor{teal}{<déclaration>} in \textcolor{red}{<expression>}: \textcolor{blue}{[corps]}}
+\caption{Instructions en Python}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{La boucle \mykeyword{do}-\mykeyword{while}}
+
+\begin{figure}
+\mykeyword{do \{ \textcolor{blue}{[corps]} \} while (\textcolor{red}{<condition>});}
+\caption{La boucle \mykeyword{do}-\mykeyword{while}}
+\end{figure}
+
+Contrairement à la boucle \mykeyword{while}, la vérification de \mykeyword{\textcolor{red}{condition}} se fait à la fin de l'itération : \myimp{il y a donc au moins une itération effectuée}.
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{La boucle \mykeyword{for}}
+
+\begin{figure}
+\mykeyword{for (\textcolor{teal}{[déclaration ou expression]}; \textcolor{red}{[condition]}; \textcolor{orange}{[expression]}) \{ \textcolor{blue}{[corps]} \}}
+\caption{La boucle \mykeyword{for}}
+\end{figure}
+
+\uncover<2->{Le fonctionnement est le suivant :}
+
+\begin{enumerate}
+    \item<3-> \mykeyword{\textcolor{teal}{déclaration ou expression}} est évalué avant la première itération ;
+    \item<4-> \mykeyword{\textcolor{red}{condition}} est évalué avant chaque itération et si, et seulement si, elle est fausse alors la boucle cesse ;
+    \item<5-> \mykeyword{\textcolor{orange}{expression}} est évalué à la fin de chaque itération.
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Un petit exemple pour la route}
+
+\begin{example}
+
+\begin{lstlisting}[language = c++]
+int mystere(unsigned int __n)
+{
+    int ret = 1;
+
+    for (; __n > 1; --__n) {
+        ret *= __n;
+    }
+
+    return ret;
+}
+\end{lstlisting}
+
+Que peut-on dire de la fonction \mykeyword{mystere()} ?
+
+\myanswer<2->{Il s'agit de la fonction factorielle.}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Comment écrire une boucle infini}
+
+\begin{definition}
+\mydef{Une boucle infini} est une boucle dont l'expression de condition reste vraie à chaque itération : le seul moyen d'en sortir est d'utiliser le mot-clef \mykeyword{break}.
+\end{definition}
+
+\begin{uncoverenv}<2->
+\begin{figure}
+\mykeyword{while (true) \{ \textcolor{blue}{[corps]} \}} \\
+\mykeyword{for (;;) \{ \textcolor{blue}{[corps]} \}}
+\caption{Boucles infinies en C++}
+\end{figure}
+\end{uncoverenv}
+
+\end{frame}
+
+\section{Fonctions}
+
+\begin{frame}
+
+\frametitle{Déclaration et définition de fonction}
+
+Soit \( n \in \mathbb{N} \).
+
+\begin{figure}
+\mykeyword{\textcolor{teal}{<type de retour>} \textcolor{red}{<nom>}(\textcolor{orange}{<type de \_\_p1>} \textcolor{magenta}{[\_\_p0]}, \dots, \textcolor{orange}{<type de \_\_p\( n \)>} \textcolor{magenta}{[\_\_p\( n \)]});}
+\caption{Déclaration d'une fonction}
+\end{figure}
+
+\begin{definition}<2->
+On appelle cette portion de la fonction \mydef{sa signature}.
+\end{definition}
+
+\uncover<3->{Pour \myimp{définir} une fonction (la rendre utilisable), il faut lui ajouter un corps.}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Un exemple de déclaration de fonction}
+
+\begin{example}
+
+\begin{lstlisting}[language = c++]
+int pow(unsigned int, unsigned int);
+\end{lstlisting}
+
+\begin{uncoverenv}<2->
+
+\myimp{Dans ce contexte}, \myimp{le nom des paramètres} est \myimp{optionnel} : en effet, on n'utilise pas ces derniers ici.
+
+Cependant, celui-ci porte une information sur la nature du paramètre auquel il est associé.
+
+\end{uncoverenv}
+
+\begin{uncoverenv}<3->
+
+Ainsi, la déclaration suivante est préférable :
+
+\begin{lstlisting}[language = c++]
+int pow(unsigned int __n, unsigned int __exp);
+\end{lstlisting}
+
+\end{uncoverenv}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Pour bien comprendre l'intérêt d'une déclaration}
+
+\begin{example}
+
+\begin{onlyenv}<-2>
+
+\begin{lstlisting}[language = c++]
+#include <iostream>
+#include <string>
+
+void print(unsigned int __n)
+{
+    std::cout << __n << "! = " << factorielle(__n) << '\n';
+}
+
+int factorielle(unsigned int __n)
+{
+    int ret = 1;
+
+    for (; __n > 1; --__n) {
+        ret *= __n;
+    }
+
+    return ret;
+}
+
+int main()
+{
+    print(5);
+}
+\end{lstlisting}
+
+Que va-t-il se passer et pourquoi ?
+
+\myanswer<2>{Le compilateur traite le programme dans l'ordre de lecture et \mykeyword{factorielle()} n'est pas déclaré.}
+
+\end{onlyenv}
+
+\begin{onlyenv}<3->
+
+Comment corriger le problème ?
+
+\begin{visibleenv}<4->
+
+\begin{lstlisting}[language = c++]
+#include <iostream>
+#include <string>
+
+int factorielle(unsigned int); // on rajoute cette ligne
+
+void print(unsigned int __n)
+{
+    std::cout << __n << "! = " << factorielle(__n) << '\n';
+}
+
+int factorielle(unsigned int __n)
+{
+    int ret = 1;
+
+    for (; __n > 1; --__n) {
+        ret *= __n;
+    }
+
+    return ret;
+}
+
+int main()
+{
+    print(5);
+}
+\end{lstlisting}
+
+\end{visibleenv}
+
+\end{onlyenv}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Paramètre par défaut}
+
+Il est possible de spécifier une valeur par défaut pour un paramètre.
+
+\begin{uncoverenv}<2->
+
+\begin{figure}
+\mykeyword{\textcolor{orange}{<type>} \textcolor{magenta}{[identificateur]} = \textcolor{blue}{<valeur par défaut>}}
+\caption{Paramètre par défaut}
+\end{figure}
+
+\end{uncoverenv}
+
+\uncover<3->{Ainsi, \myimp{lors de l'appel de la fonction}, si aucune valeur pour \mykeyword{\textcolor{magenta}{identificateur}} n'est spécifiée, ce dernier prend pour valeur \mykeyword{\textcolor{blue}{valeur par défaut}}.}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Un exemple pour la route}
+
+\begin{example}
+
+\begin{lstlisting}[language = c++]
+char mystere(char, char = 3);
+
+char mystere(char __c, char __o)
+{
+    constexpr char lenght = 26; // équivalent à `const` en Rust
+
+    char begin = (__c >= 'a') ? 'a' : 'A';
+    char end = (__c <= 'Z') ? 'Z' : 'z';
+
+    __c += __o;
+
+    if (__c > end) {
+        __c -= lenght;
+    } else if (__c < begin) {
+        __c += lenght;
+    }
+
+    return __c;
+}
+\end{lstlisting}
+
+Que peut-on dire de la fonction \mykeyword{mystere()} ?
+
+\myanswer<2->{À condition que \mykeyword{\_\_c} soit une lettre (majuscule ou minuscule), la fonction retourne le \mykeyword{\_\_o}-ième (potentiellement négatif) caractère suivant celui-ci. Si \mykeyword{\_\_o} n'est pas spécifié, il s'agit de l'encodage d'un caractère avec le chiffre de César.}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Une petite précision avant de finir}
+
+\begin{warning}
+Il n'est pas possible d'avoir de paramètre sans valeur par défaut à droite du premier paramètre ayant une valeur par défaut.
+\end{warning}
+
+\begin{example}<2->
+
+Ainsi, une fonction ayant la signature suivante est invalide.
+
+\begin{lstlisting}[language = c++]
+void foo(char, char = 'a', char, char);
+\end{lstlisting}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}
+
+\centering\Large
+
+Merci pour votre écoute.
+
+\end{frame}
+
+\end{document}
