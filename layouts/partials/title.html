@@ -1,0 +1,5 @@
+{{ define "title" }}
+    {{ if not .IsHome }}
+        <h1>{{ if eq .Kind "taxonomy" }}{{ .Kind }} :: {{ end }}{{ .Title }}</h1>
+    {{ end }}
+{{ end }}
