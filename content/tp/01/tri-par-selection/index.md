@@ -1,5 +1,6 @@
 ---
 title: "Tri par sélection"
+weight: 02
 ---
 
 ## Présentation du problème

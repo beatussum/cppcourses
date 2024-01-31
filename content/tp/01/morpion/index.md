@@ -1,5 +1,6 @@
 ---
 title: "Morpion"
+weight: 00
 ---
 
 ## Présentation du problème

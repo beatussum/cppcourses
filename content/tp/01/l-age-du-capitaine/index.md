@@ -1,5 +1,6 @@
 ---
 title: "L'âge du capitaine"
+weight: 01
 ---
 
 ## Présentation du problème
