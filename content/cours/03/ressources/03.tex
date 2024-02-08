@@ -1,0 +1,541 @@
+\documentclass{cppcourses}
+
+\title[Formation C++ 17]{
+    Formation C++ 17 \no 03 \\
+    \small{Pointeurs}
+}
+
+\begin{document}
+
+\frame{\titlepage}
+\frame{\tableofcontents[pausesections, pausesubsections]}
+
+\section{Avant-propos}
+
+\begin{frame}
+
+\frametitle{Avant-propos}
+
+Avant de commencer, il est important de rappeler que ce cours est réalisé par \myimp{un étudiant}.
+
+Par conséquent, il n'a pas la même fiabilité qu'un cours dispensé par \myimp{un réel enseignant de l'ENSIMAG}.
+
+N'utilisez pas ce cours comme \myimp{un argument d'autorité} !
+
+Si un professeur semble, a posteriori, contredire des éléments apportés par ce cours, \myimp{il a très probablement raison}.
+
+Ce document est \myimp{vivant} : je veillerai à corriger les coquilles ou erreurs plus problématiques.
+
+\end{frame}
+
+\section{Introduction des pointeurs}
+
+\begin{frame}
+
+\frametitle{Qu'est-ce qu'un pointeur ?}
+
+\begin{definition}
+\mydef{Un pointeur} qui pointe vers un objet donné représente \myimp{l'adresse mémoire du premier octet dudit objet}.
+\end{definition}
+
+\end{frame}
+
+\subsection{Déclaration d'un pointeur}
+
+\subsubsection{Les pointeurs \emph{classiques}}
+
+\begin{frame}
+
+\frametitle{Les pointeurs \emph{classiques}}
+
+\begin{figure}
+\mykeyword{\textcolor{orange}{<type>}* \textcolor{red}{<identifiant>};}
+\caption{Déclaration d'un pointeur \emph{classiques}}
+\end{figure}
+
+Avec la syntaxe ci-dessus, on déclare un pointeur appelé \mykeyword{\textcolor{red}{identifiant}} et pointant vers un objet de type \mykeyword{\textcolor{orange}{type}}.
+
+\begin{remark}<2->
+La taille d'un pointeur en mémoire est toujours la même peu importe la valeur de \mykeyword{\textcolor{orange}{type}} : \myimp{elle est égale à un mot}.
+\end{remark}
+
+\end{frame}
+
+\subsubsection{Les pointeurs de tableaux}
+
+\begin{frame}
+
+\frametitle{Les pointeurs de tableau}
+
+\begin{remark}
+On rappelle que \mykeyword{\textcolor{orange}{<type>}[\textcolor{blue}{<N>}]} caractérise le type d'un tableau. Ainsi, pour \mykeyword{\textcolor{blue}{N}} distinct, deux tableaux sont de type distinct.
+\end{remark}
+
+Pour déclarer \myimp{un pointeur de tableau}, il faut donc préciser la taille du tableau référencé. On utilise la syntaxe suivante :
+
+\begin{figure}
+\mykeyword{\textcolor{orange}{<type>} (*\textcolor{red}{<identifiant>})[\textcolor{blue}{<N>}];}
+\caption{Déclaration d'un pointeur de tableau}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Une taille inconnue}
+
+\begin{remark}
+Le type \mykeyword{\textcolor{orange}{<type>} (*\textcolor{red}{<identifiant>})[]} existe mais il est à éviter.
+\end{remark}
+
+\begin{remark}<2->
+La règle est qu'il existe \myimp{une conversion implicite} de \mykeyword{\textcolor{orange}{<type>} (*\textcolor{red}{<identifiant>})[\textcolor{blue}{<N>}]} vers \mykeyword{\textcolor{orange}{<type>} (*\textcolor{red}{<identifiant>})[]}, mais, dans l'autre sens, il faut \myimp{une conversion explicite}.
+\end{remark}
+
+\end{frame}
+
+\subsubsection{Les pointeurs de fonction}
+
+\begin{frame}
+
+\frametitle{Les pointeurs de fonction}
+
+\begin{definition}
+\mydef{Un pointeur de fonction} est un pointeur qui référence une fonction, un morceau du code exécutable, plutôt qu'une donnée.
+\end{definition}
+
+\begin{uncoverenv}<2->
+
+Pour \( n \in \mathbb{N} \), la syntaxe utilisé pour en définir un est la suivante :
+
+\begin{figure}
+\mykeyword{\textcolor{orange}{<type>} (*\textcolor{red}{<identifiant>})(\textcolor{magenta}{<type de \_\_p1>}, \dots, \textcolor{magenta}{<type de \_\_p\( n \)>});} \\
+\caption{Déclaration d'un pointeur de fonction}
+\end{figure}
+
+\end{uncoverenv}
+
+\end{frame}
+
+\subsection{Pointeurs nuls}
+
+\begin{frame}
+
+\frametitle{Pointeurs nuls}
+
+\myimp{N'importe quel type de pointeur} peut avoir \myimp{la valeur \mykeyword{nullptr}} qui signifie que celui-ci pointe vers l'adresse nulle, une adresse invalide : il pointe donc vers \textit{rien}.
+
+\begin{remark}<2->
+
+Un pointeur peut être implicitement converti en booléen :
+
+\begin{enumerate}
+    \item<3-> \myimp{s'il est nul}, alors il est \myimp{faux} ;
+    \item<4-> \myimp{sinon}, il est \myimp{vrai}.
+\end{enumerate}
+
+\end{remark}
+
+\begin{remark}<5->
+\mykeyword{nullptr} a pour type \mykeyword{std::nullptr\_t}.
+\end{remark}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{segmentation fault}
+
+\begin{example}
+
+\begin{lstlisting}[language=c++]
+#include <iostream>
+
+int main()
+{
+    int* p_a = nullptr;
+
+    std::cout << *p_a << '\n';
+}
+\end{lstlisting}
+
+Dans l'exemple ci-dessus, que va-t-il se passer ?
+
+\myanswer<2->{On va avoir une erreur de segmentation car \mykeyword{p\_a} a une valeur invalide.}
+
+\end{example}
+
+\begin{definition}<visible@3->
+\mydef{Une erreur de segmentation} (en anglais \mydef{\enquote{segmentation fault}}) est un plantage d'une application qui a tenté d'accéder à un emplacement mémoire qui ne lui était pas alloué.
+\end{definition}
+
+\end{frame}
+
+\subsection{Pointeurs et tableaux}
+
+\begin{frame}[fragile]
+
+\frametitle{Pointeurs et tableaux}
+
+On peut confondre \myimp{un tableau} avec \myimp{le pointeur pointant sur son premier élément}.
+
+\begin{remark}<2->
+Il existe donc une conversion implicite entre \mykeyword{\textcolor{orange}{<type>}[\textcolor{blue}{<N>}]} et \mykeyword{\textcolor{orange}{<type>}*}.
+\end{remark}
+
+\begin{warning}<3->
+Il ne faut pas confondre cela avec la notion de \myimp{pointeur de tableau}.
+\end{warning}
+
+\begin{example}<4->
+
+\begin{lstlisting}[language=c++]
+int array[5];
+int* p_first = array;
+int (*p_array)[5] = &array;
+\end{lstlisting}
+
+\end{example}
+
+\end{frame}
+
+\subsection{Manipulations élémentaires des pointeurs}
+
+\subsubsection{Opérations élémentaires et déréférencement}
+
+\begin{frame}
+
+\frametitle{Manipulations élémentaires des pointeurs}
+
+Il est bon de visualiser ce qu'est un pointeur en mémoire comme étant un entier (\myimp{l'adresse de l'objet pointé}).
+
+\begin{uncoverenv}<2->
+
+Ainsi, certaines opérations sont possibles avec \mykeyword{a} et \mykeyword{b} \myimp{deux pointeurs de même types} et \mykeyword{n} \myimp{un intégral}.
+
+\begin{columns}
+    \begin{column}{0.5\textwidth}
+        \begin{figure}
+\mykeyword{a \textcolor{red}{+} n} \\
+\mykeyword{a \textcolor{red}{-} n}
+\caption{Opérateurs arithmétiques}
+        \end{figure}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+        \begin{figure}
+\mykeyword{a \textcolor{red}{+=} n} \\
+\mykeyword{a \textcolor{red}{-=} n}
+\caption{Opérateurs d'affectation associés}
+        \end{figure}
+    \end{column}
+\end{columns}
+
+\end{uncoverenv}
+
+\begin{uncoverenv}<3->
+
+\begin{figure}
+\mykeyword{a \textcolor{red}{==} b} \\
+\mykeyword{a \textcolor{red}{!=} b} \\
+\mykeyword{a \textcolor{red}{<} b} \\
+\mykeyword{a \textcolor{red}{>} b} \\
+\mykeyword{a \textcolor{red}{<=} b} \\
+\mykeyword{a \textcolor{red}{>=} b}
+\caption{Opérateurs de comparaison}
+\end{figure}
+
+\end{uncoverenv}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Une remarque importante}
+
+Pour calculer la distance séparant deux adresses mémoires de \myimp{deux pointeurs de même type} \mykeyword{a} et \mykeyword{b}, on utilise la syntaxe suivante :
+
+\begin{figure}
+\mykeyword{b \textcolor{red}{-} a}
+\caption{Soustraction de pointeurs}
+\end{figure}
+
+\begin{warning}<2->
+Le résultat de cette opération n'est pas du tout le même si \mykeyword{a} désigne \myimp{un intégral}.
+\end{warning}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{De nouveaux opérateurs}
+
+D'autres opérations sont possibles avec les pointeurs. \mykeyword{a} désigne \myimp{un pointeur} et \mykeyword{u} \myimp{une variable quelconque}.
+
+\begin{columns}[c]
+    \begin{column}{0.5\textwidth}<2->
+
+\begin{figure}
+\mykeyword{\textcolor{red}{*}a}
+\caption{Opérateur de déréférencement}
+\end{figure}
+
+\uncover<3->{On \myimp{déréférence le pointeur} : en d'autres termes, on accède à la valeur pointé par le pointeur.}
+
+\uncover<4->{Si \mykeyword{a} est de type \mykeyword{\textcolor{orange}{type}*}, le type de \mykeyword{\textcolor{red}{*}a} est \mykeyword{\textcolor{orange}{type}\&} (\myimp{une référence} vers \mykeyword{a}).}
+
+    \end{column}
+
+    \begin{column}{0.5\textwidth}<5->
+
+\begin{figure}
+\mykeyword{\textcolor{red}{\&}u}
+\caption{Opérateur d'\enquote{adresse de}}
+\end{figure}
+
+\uncover<6->{On récupère l'adresse mémoire de \mykeyword{u}.}
+
+\uncover<7->{Si \mykeyword{u} est de type \mykeyword{\textcolor{orange}{type}}, le type de \mykeyword{\textcolor{red}{\&}u} est \mykeyword{\textcolor{orange}{type}*}.}
+
+    \end{column}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Une mise en application}
+
+\begin{example}
+
+\begin{lstlisting}[language=c++]
+#include <iostream>
+#include <cstdint>
+
+int main()
+{
+    std::uint8_t a = 10;
+    std::uint16_t b = 257;
+    std::uint8_t* p_a = &a;
+
+    std::cout << static_cast<int>(*p_a) << '\n';
+    std::cout << static_cast<int>(*(p_a + 1)) << '\n';
+}
+\end{lstlisting}
+
+Dans l'exemple ci-dessus, que va-t-il se passer ?
+
+\myanswer<2->{Il sera imprimé en console \enquote{10}, puis \enquote{1} (resp. \enquote{255}) sur une machine petit-boutiste (resp. gros-boutiste).}
+
+\end{example}
+
+\end{frame}
+
+\subsubsection{Un opérateur bien pratique}
+
+\begin{frame}[fragile]
+
+\frametitle{Un opérateur bien pratique}
+
+\begin{example}
+
+\begin{lstlisting}[language = c++]
+int* a = {1, 2, 3, 4, 5}; // un pointeur vers le premier élément du tableau
+
+// Si on veut accéder au troisème élément du tableau, il faut faire :
+
+std::cout << *(a + 2) << '\n';
+\end{lstlisting}
+
+\begin{uncoverenv}<2->
+
+Comme cette opération n'est pas pratique et très courante, on introduit un nouvel opérateur qui
+
+\begin{enumerate}
+    \item incrémente,
+    \item puis déréférence le pointeur.
+\end{enumerate}
+
+\end{uncoverenv}
+
+\begin{uncoverenv}<3->
+
+\begin{lstlisting}[language = c++]
+int* a = {1, 2, 3, 4, 5}; // un pointeur vers le premier élément du tableau
+
+// Maintenant, on peut faire :
+
+std::cout << a[2] << '\n';
+\end{lstlisting}
+
+\end{uncoverenv}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Détails syntaxiques}
+
+\mykeyword{a} désigne {un pointeur} et \mykeyword{n} \myimp{un intégral}.
+
+\begin{figure}
+\mykeyword{a\textcolor{red}{[}n\textcolor{red}{]}}
+\caption{Opérateurs d'indice}
+\end{figure}
+
+\uncover<2->{Si \mykeyword{a} est de type \mykeyword{\textcolor{orange}{type}}, alors \mykeyword{a\textcolor{red}{[}n\textcolor{red}{]}} a pour type \mykeyword{\textcolor{orange}{type}\&}.}
+
+\end{frame}
+
+\subsection{Pointeurs multiples}
+
+\begin{frame}
+
+\frametitle{Un petit rappel}
+
+\begin{remark}
+\myimp{En C et C++}, une chaîne de caractère est, \myimp{par convention}, \myimp{un tableau de caractères} dont la fin est déterminée par \myimp{le caractère nulle} (\myimp{\mykeyword{'\textbackslash 0'}}).
+\end{remark}
+
+\begin{remark}<2->
+On appelle le caractère \enquote{\myimp{\textbackslash}} \myimp{le caractère d'échappement}.
+\end{remark}
+
+\begin{warning}<3->
+Il ne faut pas confondre \myimp{le caractère nulle} (\myimp{\mykeyword{'\textbackslash 0'}}) et \myimp{le caractère zéro} (\myimp{\mykeyword{'0'}}).
+\end{warning}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Un petit exemple}
+
+\begin{example}
+
+\begin{lstlisting}[language = c++]
+char a[] = "Hello!";
+char b[] = {'H', 'e', 'l', 'l', 'o', '!', '\0'};
+\end{lstlisting}
+
+Dans l'exemple ci-dessus, \mykeyword{a} et \mykeyword{b} ont, en fait, la même valeur.
+
+\end{example}
+
+\begin{warning}<2->
+Il ne faut donc pas oublier la présence du caractère nul quand on veut déterminer la taille du tableau.
+\end{warning}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Pointeurs multiples}
+
+On reprend la syntaxe suivante :
+
+\begin{figure}
+\mykeyword{\textcolor{orange}{<type>}* \textcolor{red}{<identifiant>};}
+\caption{Déclaration d'un pointeur \emph{classiques}}
+\end{figure}
+
+On remarque que \mykeyword{\textcolor{orange}{<type>}*} définie également un type : un pointeur est un type valide.
+
+Ainsi, il existe des pointeurs de pointeur.
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Un cas concret pour bien comprendre}
+
+\begin{example}
+
+\begin{lstlisting}[language=c++]
+#include <iostream>
+
+int main()
+{
+    const char* sentence[] = {"Hello", "world!"};
+
+    for (const char** i = sentence; i != (sentence + 2); ++i) {
+        std::cout << *i << ' ';
+    }
+
+    std::cout << '\n';
+}
+\end{lstlisting}
+
+Que fait le programme ci-dessus ?
+
+\myanswer<2->{Il imprime sur la console \enquote{Hello world!}.}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Le mot-clef \mykeyword{const}}
+
+Le mot-clef \mykeyword{const} spécifie qu'une variable est \myimp{immutable}.
+
+\begin{remark}<2->
+\mykeyword{const} caractérise le type.
+\end{remark}
+
+\begin{example}<3->
+
+\mykeyword{char} et \mykeyword{const char} sont deux types distincts.
+
+Cependant, il existe une conversion implicite de \mykeyword{\textcolor{orange}{<type>}} vers \mykeyword{const \textcolor{orange}{<type>}}.
+
+\end{example}
+
+\begin{example}<4->
+
+\begin{lstlisting}[language=c++]
+int a = 5;
+const int b = a;
+++b; // il y a erreur
+b = 7; // là aussi
+\end{lstlisting}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Constants pointeurs ou pointeurs constants}
+
+\mykeyword{const \textcolor{orange}{<type>}*} et \mykeyword{\textcolor{orange}{<type>} *const} ne signifie pas la même chose.
+
+\begin{enumerate}
+    \item<2-> \myimp{Pour le premier}, le pointeur pointe vers une entité de type \mykeyword{const \textcolor{orange}{<type>}} ;
+    \item<3-> \myimp{pour le second}, le pointeur est lui-même immutable.
+\end{enumerate}
+
+\uncover<4->{La règle pour \mykeyword{const} est la suivante :}
+
+\begin{enumerate}
+    \item<5-> il s'applique sur \myimp{le type de gauche},
+    \item<6-> \myimp{s'il n'y a pas de type à gauche}, alors il s'applique sur \myimp{le type de droite}.
+\end{enumerate}
+
+\begin{remark}<7->
+\mykeyword{const \textcolor{orange}{<type>}} et \mykeyword{\textcolor{orange}{<type>} const} désignent donc les mêmes types.
+\end{remark}
+
+\end{frame}
+
+\begin{frame}
+
+\centering\Large
+
+Merci pour votre écoute.
+
+\end{frame}
+
+\end{document}
