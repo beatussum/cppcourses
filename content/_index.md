@@ -1,5 +1,5 @@
 ---
-title: "Formations C++ 17"
+title: "Formation C++ 17"
 ---
 
 {{% notice "warning" %}}
@@ -22,7 +22,7 @@ Le **C++** est un langage de programmation polyvalent et puissant, célèbre pou
 
 Cette formation a débuté pendant **l'année scolaire 2023-2024** et est organisé par [Mattéo Rossillol‑‑Laruelle](mailto:Mattéo%20Rossillol‑‑Laruelle%20<matteo.rossillol--laruelle@grenoble-inp.org>).
 
-Si vous êtes intéressé par la formations, n'oubliez pas de rejoindre [le serveur Discord](https://discord.gg/kzs5p28kGf) pour faciliter l'échange avec moi (Mattéo Rossillol‑‑Laruelle). En outre, n'hésitez surtout pas à me contacter par [mail](mailto:Mattéo%20Rossillol‑‑Laruelle%20<matteo.rossillol--laruelle@grenoble-inp.org>) ou par MP sur Discord.
+Si vous êtes intéressé par la formation, n'oubliez pas de rejoindre [le serveur Discord](https://discord.gg/kzs5p28kGf) pour faciliter l'échange avec moi (Mattéo Rossillol‑‑Laruelle). En outre, n'hésitez surtout pas à me contacter par [mail](mailto:Mattéo%20Rossillol‑‑Laruelle%20<matteo.rossillol--laruelle@grenoble-inp.org>) ou par MP sur Discord.
 
 ## Pourquoi ce site ?
 
