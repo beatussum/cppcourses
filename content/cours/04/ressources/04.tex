@@ -1,0 +1,739 @@
+\documentclass{cppcourses}
+
+\title[Cours \no 04]{
+    \large{Formation C++ 17} \\
+    Cours \no 04 \\
+    \small{Retour sur la formation C}
+}
+
+\begin{document}
+
+\myforeword
+
+\section{Différences avec le C}
+
+\subsection{Surcharge de fonction}
+
+\begin{frame}
+
+\frametitle{Surcharge de fonction}
+
+\begin{definition}
+Si le nom d'une fonction réfère à plus d'une entité, alors cette fonction est dite \mydef{surchargée} (ou \mydef{\emph{overloaded}}).
+\end{definition}
+
+\begin{remark}<2->
+Le compilateur doit alors déterminer quelle \myimp{surcharge} (ou \myimp{\emph{overload}}) appeler. En d'autres termes, la surcharge avec les paramètres correspondant le mieux est appelée.
+\end{remark}
+
+\begin{remark}<3->
+\myimp{En C}, cette notion n'existe pas : il est impossible de surcharger des fonctions. Ainsi, deux fonctions distinctes doivent avoir nécessairement des noms distincts.
+\end{remark}
+
+\end{frame}
+
+\subsubsection{Exemples}
+
+\begin{frame}[fragile]
+
+\frametitle{Un petit exemple}
+
+\begin{example}
+
+\begin{lstlisting}[language = c++]
+#include <iostream>
+
+int foo(bool) { return 0; }
+int foo(int) { return 1; }
+
+int main()
+{
+    int a = 42;
+
+    std::cout << foo(a) << '\n';
+}
+\end{lstlisting}
+
+Dans l'exemple ci-dessus que sera-t-il imprimé en console ?
+
+\myanswer<2->{Il sera imprimé \enquote{1}.}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Un petit rappel}
+
+\begin{warning}
+On rappelle cependant que le C++ est \myimp{un langage faiblement typé}.
+\end{warning}
+
+\begin{example}<2->
+
+\begin{lstlisting}[language = c++]
+#include <iostream>
+
+int foo(bool) { return 0; }
+
+int main()
+{
+    int a = 42;
+
+    std::cout << foo(a) << '\n';
+}
+\end{lstlisting}
+
+Dans l'exemple ci-dessus que sera-t-il imprimé en console ?
+
+\myanswer<2->{Il sera imprimé \enquote{0}. En effet, un entier peut être implicitement converti en booléen.}
+
+\end{example}
+
+\end{frame}
+
+\subsection{Déclaration implicite de fonction}
+
+\begin{frame}
+
+\frametitle{Déclaration implicite de fonction}
+
+\begin{definition}
+Si une fonction n'a pas été déclaré avant son premier appel, celle-ci est \mydef{déclaré implicitement} si le compilateur déduit une signature de cet appel.
+\end{definition}
+
+\begin{remark}<2->
+Même si cela est à proscrire, \myimp{en C} (du moins, pour les standards antérieurs à \myimp{C 99}), il est possible d'avoir des déclarations implicites.
+\end{remark}
+
+\begin{remark}<3->
+\myimp{En C++}, il n'existe pas de déclaration implicite.
+\end{remark}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Un petit exemple}
+
+\begin{example}
+
+\begin{lstlisting}[language = c]
+// On n'inclue pas stdio.h
+
+int main()
+{
+    printf("Hello world!");
+
+    return 0;
+}
+\end{lstlisting}
+
+Dans l'exemple (écrit en C) ci-dessus, le compilateur pourrait n'imprimer sur la console qu'un avertissement et non se terminer avec une erreur.
+
+\end{example}
+
+\end{frame}
+
+\subsection{Allocation dynamique}
+
+\subsubsection{Allocation dynamique en C}
+
+\begin{frame}
+
+\frametitle{Allocation dynamique en C}
+
+\myimp{En C}, pour \myimp{allouer} ou \myimp{libérer dynamiquement} une ressource, on utilise les fonctions suivantes se trouvant dans l'entête \emph{stdlib.h} :
+
+\begin{myfigure}<2->
+\mykeyword{\textcolor{blue}{void}* malloc(\textcolor{blue}{size\_t} size);} \\
+\mykeyword{\textcolor{blue}{void}* calloc(\textcolor{blue}{size\_t} num, \textcolor{blue}{size\_t} size);} \\
+\mykeyword{\textcolor{blue}{void}* realloc(\textcolor{blue}{void}* ptr, \textcolor{blue}{size\_t} new\_size);} \\
+\mykeyword{\textcolor{blue}{void}* aligned\_alloc(\textcolor{blue}{size\_t} alignment, \textcolor{blue}{size\_t} size);}
+\caption{Allocation dynamique en C}
+\end{myfigure}
+
+\begin{myfigure}<3->
+\mykeyword{\textcolor{blue}{void} free(\textcolor{blue}{void}* ptr);}
+\caption{Libération dynamique en C}
+\end{myfigure}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Une petite observation}
+
+\begin{remark}
+
+Le type de retour des différentes fonctions est, à chaque fois, un \mykeyword{\textcolor{blue}{void}*}. En effet, ce type, comme expliqué dans le cours précédent, correspond à \myimp{un type pointeur générique}.
+
+Grossièrement, comme \myimp{la taille en mémoire caractérise la complétude d'un type} et que \myimp{tous les pointeurs font la même taille}, \mykeyword{\textcolor{blue}{void}*} est bien \myimp{un type complet} même si \mykeyword{\textcolor{blue}{void}} ne l'est pas.
+
+De plus, il existe une conversion implicite de \mykeyword{\textcolor{blue}{type}*} vers \mykeyword{\textcolor{blue}{void}*}.
+
+\end{remark}
+
+\end{frame}
+
+\subsubsection{Allocation dynamique en C++}
+
+\begin{frame}
+
+\frametitle{Allocation dynamique en C++}
+
+\myimp{En C++}, on préfère utiliser les deux opérateurs suivants :
+
+\begin{columns}
+
+\begin{column}{0.5 \textwidth}
+
+\begin{myfigure}<1->
+\mykeyword{new} \\
+\mykeyword{new[]}
+\caption{Allocation dynamique en C++}
+\end{myfigure}
+
+\end{column}
+
+\begin{column}{0.5 \textwidth}
+
+\begin{myfigure}<2->
+\mykeyword{delete} \\
+\mykeyword{delete[]}
+\caption{Libération dynamique en C++}
+\end{myfigure}
+
+\end{column}
+
+\end{columns}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Une petite mise en pratique}
+
+\begin{columns}
+
+\begin{column}{0.45 \textwidth}
+
+\begin{example}
+
+\begin{lstlisting}[language = c++]
+#include <iostream>
+
+int main()
+{
+    int* a = new int(10);
+
+    std::cout << "a = " << *a << '\n';
+
+    delete a;
+}
+\end{lstlisting}
+
+\end{example}
+
+\end{column}
+
+\begin{column}{0.45 \textwidth}
+
+\begin{example}
+
+\begin{lstlisting}[language = c++]
+#include <cstddef>
+
+int main()
+{
+    int* a = new int[10];
+
+    for (std::size_t i = 0; i != 10; ++i) {
+        a[i] = i;
+    }
+
+    delete[] a;
+}
+\end{lstlisting}
+
+\end{example}
+
+\end{column}
+
+\end{columns}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Utilisation avancée de ces opérateurs}
+
+\begin{remark}
+
+Il existe des utilisations plus avancées de ces deux opérateurs que l'on détaillera peut-être plus tard dans la formation.
+
+On peut citer :
+
+\begin{itemize}
+    \item<2-> allocation dans \myimp{un tampon} avec \myimp{le \emph{placement new}},
+    \item<3-> allocation sans \myimp{exception},
+    \item<4-> allocation avec \myimp{contrainte d'alignement},
+    \item<5-> \myimp{\emph{handler}}.
+\end{itemize}
+
+\end{remark}
+
+Pour les curieux, voir \url{https://en.cppreference.com/w/cpp/memory/new}.
+
+\end{frame}
+
+\subsection{Opérateurs de conversion}
+
+\subsubsection{Les conversions explicites en C++}
+
+\begin{frame}
+
+\frametitle{Les conversions explicites en C++}
+
+\myimp{Le C++} est doté de plusieurs opérateurs de conversion différents ayant chacun un objectif propre.
+
+\begin{myfigure}
+\mykeyword{const\_cast<\textcolor{blue}{<type cible>}>(\textcolor{orange}{<expression>})} \\
+\mykeyword{static\_cast<\textcolor{blue}{<type cible>}>(\textcolor{orange}{<expression>})} \\
+\mykeyword{dynamic\_cast<\textcolor{blue}{<type cible>}>(\textcolor{orange}{<expression>})} \\
+\mykeyword{reinterpret\_cast<\textcolor{blue}{<type cible>}>(\textcolor{orange}{<expression>})}
+\caption{Différents opérateurs de conversions en C++}
+\end{myfigure}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{\mykeyword{const\_cast}}
+
+\begin{myfigure}
+\mykeyword{const\_cast<\textcolor{blue}{<type cible>}>(\textcolor{orange}{<expression>})} \\
+\caption{Utilisation de \mykeyword{const\_cast}}
+\end{myfigure}
+
+Il permet la conversion de \mykeyword{\textcolor{orange}{expression}} en un type \mykeyword{\textcolor{blue}{type cible}} de constance différente.
+
+\begin{example}<2->
+
+\begin{lstlisting}[language = c++]
+#include <iostream>
+
+int main()
+{
+    const int* p_a = new int(5);
+
+    std::cout << *p_a << '\n';
+
+    *const_cast<int*>(p_a) = 10;
+
+    std::cout << *p_a << '\n';
+}
+\end{lstlisting}
+
+Dans l'exemple ci-dessus que sera-t-il imprimer sur la ligne de commande ?
+
+\myanswer<3->{Il sera imprimé \enquote{5}, puis \enquote{10}.}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{\mykeyword{static\_cast}}
+
+\begin{myfigure}
+\mykeyword{static\_cast<\textcolor{blue}{<type cible>}>(\textcolor{orange}{<expression>})} \\
+\caption{Utilisation de \mykeyword{static\_cast}}
+\end{myfigure}
+
+Il permet la conversion de \mykeyword{\textcolor{orange}{expression}} en un type \mykeyword{\textcolor{blue}{type cible}} en utilisant une combinaison de règles de conversion implicites et d'autres fournies par l'utilisateur.
+
+\begin{example}<2->
+
+\begin{lstlisting}[language = c++]
+#include <iostream>
+
+int main()
+{
+    double a = 1.5;
+
+    std::cout << static_cast<int>(a) << '\n';
+}
+\end{lstlisting}
+
+Dans l'exemple ci-dessus que sera-t-il imprimer sur la ligne de commande ?
+
+\myanswer<3->{Il sera imprimé \enquote{1}.}
+
+\end{example}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{\mykeyword{reinterpret\_cast}}
+
+\begin{myfigure}
+\mykeyword{reinterpret\_cast<\textcolor{blue}{<type cible>}>(\textcolor{orange}{<expression>})} \\
+\caption{Utilisation de \mykeyword{reinterpret\_cast}}
+\end{myfigure}
+
+Il permet la conversion de \mykeyword{\textcolor{orange}{expression}} en un type \mykeyword{\textcolor{blue}{type cible}} en réinterprétant la représentation binaire sous-jacente.
+
+\begin{example}<2->
+
+\begin{lstlisting}[language = c++]
+#include <cstdint>
+#include <iostream>
+
+int main()
+{
+    std::uint32_t a = 0x00544942;
+
+    std::cout << reinterpret_cast<char*>(&a) << '\n';
+}
+\end{lstlisting}
+
+Dans l'exemple ci-dessus que sera-t-il imprimer sur la ligne de commande ?
+
+\myanswer<3->{En supposant que l'on travaille sur une machine petit-boutiste, il sera imprimé \enquote{BIT}.}
+
+\end{example}
+
+\end{frame}
+
+\subsubsection{Les conversions explicites en C}
+
+\begin{frame}
+
+\frametitle{Les conversions explicites en C}
+
+\begin{myfigure}
+\mykeyword{(\textcolor{blue}{<type cible>}) \textcolor{orange}{<expression>}} \\
+\mykeyword{\textcolor{blue}{<type cible>} (\textcolor{orange}{<expression>})}
+\caption{Conversion explicite en C}
+\end{myfigure}
+
+\uncover<2->{Le comportement est équivalent à une tentative de conversion dans l'ordre suivant :}
+
+\begin{enumerate}
+    \item<3-> \mykeyword{const\_cast}
+    \item<4-> \mykeyword{static\_cast}
+    \item<5-> \mykeyword{dynamic\_cast}
+    \item<6-> \mykeyword{reinterpret\_cast}
+\end{enumerate}
+
+\end{frame}
+
+\subsection{Mots clefs}
+
+\begin{frame}
+
+\frametitle{Mots clefs}
+
+Bien que \myimp{le C++} descends du \myimp{C} et que nombreux mots-clefs du \myimp{C} se retrouve également en \myimp{C++}, \myimp{le C} a suivi sa propre évolution : par conséquent, certains mots clefs existent en \myimp{C} et non en \myimp{C++}.
+
+\begin{remark}<2->
+Cependant, certains des mots clefs qui ont été introduit en \myimp{C} l'ont également été en \myimp{C++} parallèlement même s'\myimp{ils ne donc suivent pas nécessairement la même syntaxe}.
+\end{remark}
+
+\end{frame}
+
+\subsubsection{\mykeyword{restrict}}
+
+\begin{frame}
+
+\frametitle{\mykeyword{restrict}}
+
+\begin{myfigure}
+\mykeyword{\textcolor{blue}{<type>}* restrict}
+\caption{Utilisation de \mykeyword{restrict}}
+\end{myfigure}
+
+\begin{uncoverenv}<2->
+
+Marquer un pointeur comme \mykeyword{restrict} indique au compilateur que l'entité visée par ce pointeur ne peut être \myimp{lu} ou \myimp{modifié}, \myimp{directement} ou \myimp{indirectement} que par ledit pointeur.
+
+Ce mot clef permet au compilateur certaines optimisations, en plus d'indiquer au lecteur le comportement de l'entité spécifiée.
+
+\end{uncoverenv}
+
+\begin{warning}<3->
+Si les contraintes définies ci-dessus ne sont pas respectées, alors le comportement est \myimp{indéfini}.
+\end{warning}
+
+\begin{remark}<4->
+\mykeyword{restrict} caractérise le type : c'est-à-dire que \mykeyword{\textcolor{blue}{type}* restrict} et \mykeyword{\textcolor{blue}{type}*} sont deux types distincts.
+\end{remark}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Une petite mise en contexte}
+
+\begin{example}
+
+\begin{lstlisting}[language = c]
+void copy(int n, int* restrict p, int* restrict q)
+{
+    while (n-- > 0) {
+        *p++ = *q++;
+    }
+}
+
+int main()
+{
+    int d[100];
+
+    for (size_t i = 0; i != 50; ++i) {
+        d[i] = i;
+    }
+
+    copy(50, d + 50, d);
+    copy(50, d + 1, d);
+}
+\end{lstlisting}
+
+Dans l'exemple ci-dessus que va-t-il se passer lors des deux appels à \mykeyword{copy()} ?
+
+\myanswer<2->{Le premier valide car \mykeyword{p} et \mykeyword{q} ne référeront jamais au même élément ; cependant, ce n'est pas le cas du second appel.}
+
+\end{example}
+
+\end{frame}
+
+\subsubsection{D'autres mots clefs}
+
+\begin{frame}
+
+\frametitle{D'autres mots clefs}
+
+\begin{columns}<only@-4>
+
+\begin{column}{0.5 \textwidth}
+
+\begin{myfigure}
+\mykeyword{\_Alignas} \\
+\mykeyword{\_Alignof}
+\caption{Mots clefs relatifs à l'alignement}
+\end{myfigure}
+
+\begin{myfigure}<2->
+\mykeyword{\_Atomic}
+\caption{Spécifieur pour l'atomicité}
+\end{myfigure}
+
+\end{column}
+
+\begin{column}{0.5 \textwidth}
+
+\begin{myfigure}<3->
+\mykeyword{\_Generic}
+\caption{Mot clef pour la sélection générique}
+\end{myfigure}
+
+\begin{myfigure}<4->
+\mykeyword{\_Bool}
+\caption{Type booléen}
+\end{myfigure}
+
+\end{column}
+
+\end{columns}
+
+\begin{columns}<only@5->
+
+\begin{column}{0.5 \textwidth}
+
+\begin{myfigure}<5->
+\mykeyword{\_Complex} \\
+\mykeyword{\_Imaginary}
+\caption{Mots clefs relatifs aux nombres complexes}
+\end{myfigure}
+
+\begin{myfigure}<6->
+\mykeyword{\_Thread\_local}
+\caption{Spécifieur de durée de stockage}
+\end{myfigure}
+
+\end{column}
+
+\begin{column}{0.5 \textwidth}
+
+\begin{myfigure}<7->
+\mykeyword{\_Static\_assert}
+\caption{Mot clef pour les assertions statiques}
+\end{myfigure}
+
+\end{column}
+
+\end{columns}
+
+\end{frame}
+
+\section{Notions manquantes}
+
+\subsection{Notion de structure}
+
+\begin{frame}
+
+\frametitle{Notion de structure}
+
+\begin{myfigure}
+\mykeyword{struct \textcolor{red}{[identifier]};}
+\caption{Déclaration d'une structure}
+\end{myfigure}
+
+\begin{myfigure}
+\mykeyword{struct \textcolor{red}{[identifier]} \{ \textcolor{blue}{[corps]} \};}
+\caption{Définition d'une structure}
+\end{myfigure}
+
+\begin{definition}<2->
+\mydef{Une structure} est un type consistant en \myimp{un agrégat} de données.
+\end{definition}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Un petit exemple}
+
+\begin{example}
+
+\begin{lstlisting}[language = c++]
+#include <cstdint>
+#include <iostream>
+
+struct Player { char* name; std::uint8_t exp; };
+
+int main()
+{
+    Player matteo = { "Mattéo", 255 }; // initialisation aggrégat
+
+    std::cout << matteo.name << '\n';
+    std::cout << matteo.exp << '\n';
+}
+\end{lstlisting}
+
+Que sera-t-il imprimé sur la console ?
+
+\myanswer<2->{Il sera imprimé \enquote{Mattéo}, puis \enquote{255}.}
+
+\end{example}
+
+\end{frame}
+
+\subsection{L'union fait la force}
+
+\begin{frame}
+
+\frametitle{L'union fait la force}
+
+\begin{myfigure}
+\mykeyword{union \textcolor{red}{[identifier]} \{ \textcolor{blue}{[corps]} \};}
+\caption{Déclaration d'un union}
+\end{myfigure}
+
+\begin{definition}<2->
+\mydef{Un union} est un type spécial de structure où seul un membre vit à la fois.
+\end{definition}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Un petit exemple}
+
+\begin{example}
+
+\begin{lstlisting}[language = c++]
+#include <cstdint>
+#include <iostream>
+
+union Union { std::uint32_t integer; char character; };
+
+int main()
+{
+    Union u = {0x00544942};
+
+    std::cout << &u.character << '\n';
+}
+\end{lstlisting}
+
+Dans l'exemple ci-dessus que sera-t-il imprimé sur la ligne de commande ?
+
+\myanswer<2->{Il sera imprimé \enquote{BIT}.}
+
+\end{example}
+
+\end{frame}
+
+\subsection{Nommer des constantes avec les énumérations}
+
+\begin{frame}
+
+\frametitle{Nommer des constantes avec les énumérations}
+
+\begin{myfigure}
+\mykeyword{<enum> \textcolor{red}{[identifier]} : \textcolor{orange}{<base>};}
+\caption{Déclaration d'une énumération}
+\end{myfigure}
+
+\begin{myfigure}
+\mykeyword{<enum> \textcolor{red}{[identifier]} \{ \textcolor{blue}{[corps]} \};} \\
+\mykeyword{<enum> \textcolor{red}{[identifier]} : \textcolor{orange}{<base>} \{ \textcolor{blue}{[corps]} \};}
+\caption{Définition d'une énumération}
+\end{myfigure}
+
+\begin{itemize}
+    \item<2-> \mykeyword{<enum>} peut prendre les valeurs \mykeyword{enum}, \mykeyword{enum class} ou \mykeyword{enum struct}.
+    \item<3-> \myimp{Le type entier} des valeurs définies est \mykeyword{\textcolor{orange}{<base>}}.
+\end{itemize}
+
+\begin{definition}<4->
+\mydef{Une énumération} est un type distincts définissant une liste de valeurs nommées dans une plage donnée.
+\end{definition}
+
+\end{frame}
+
+\begin{frame}[fragile]
+
+\frametitle{Un petit exemple}
+
+\begin{example}
+
+\begin{lstlisting}[language = c++]
+#include <cstdint>
+#include <iostream>
+
+enum Enum : uint8_t { first, second = 10, third };
+enum class EnumClass { first, second = 10, third };
+
+int main()
+{
+    int a = first;
+    Enum b = 10;
+    EnumClass c = EnumClass::first;
+
+    std::cout << a << ", " << b << ", " << c << '\n';
+}
+\end{lstlisting}
+
+Que va-t-il se passer et pourquoi ?
+
+\end{example}
+
+\end{frame}
+
+\mybye
+
+\end{document}
